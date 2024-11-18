@@ -1,13 +1,12 @@
 import Component from "@ember/component";
 import { fn } from "@ember/helper";
-import { on } from "@ember/modifier";
 import { action } from "@ember/object";
 import { service } from "@ember/service";
 import DButton from "discourse/components/d-button";
-import DMenu from "discourse/components/d-menu";
 import DTooltip from "discourse/components/d-tooltip";
 import DropdownMenu from "discourse/components/dropdown-menu";
 import concatClass from "discourse/helpers/concat-class";
+import dIcon from "discourse-common/helpers/d-icon";
 
 export default class FluffSelector extends Component {
   @service tooltip;
@@ -44,7 +43,7 @@ export default class FluffSelector extends Component {
         class="btn btn-flat btn-fluff"
       >
         <:trigger>
-          🪄
+          {{dIcon "wand-magic-sparkles"}}
         </:trigger>
         <:content>
           <DropdownMenu as |dropdown|>
