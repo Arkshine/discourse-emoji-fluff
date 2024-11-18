@@ -13,7 +13,6 @@ export default class FluffSelector extends Component {
   @service tooltip;
 
   get allowedEffects() {
-    console.log("allowedEffects", settings.allowed_effects);
     return settings.allowed_effects.split("|");
   }
 
