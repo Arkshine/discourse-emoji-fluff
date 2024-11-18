@@ -70,7 +70,6 @@ export default apiInitializer("1.8.0", (api) => {
           this.textManipulation.autocomplete({
             template: findRawTemplate("fluff-selector-autocomplete"),
             key: ":",
-            autoSelectFirstSuggestion: false,
             afterComplete: (text) => {
               this.set("value", text);
               schedule(
