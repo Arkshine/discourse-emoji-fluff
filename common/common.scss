@@ -86,10 +86,6 @@
         background-color: var(--d-hover);
         text-decoration: none;
       }
-
-      &.selected {
-        background-color: var(--d-selected);
-      }
     }
   }
 
@@ -99,6 +95,10 @@
 
       a {
         flex: 1;
+      }
+
+      a.selected:not(:hover) ~ div {
+        background-color: var(--d-selected);
       }
 
       @include hover {
