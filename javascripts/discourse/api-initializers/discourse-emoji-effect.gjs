@@ -25,7 +25,7 @@ export default apiInitializer("1.8.0", (api) => {
           const textContent = nextSibling.nodeValue;
           const firstWord = textContent.split(" ")[0];
 
-          if (settings.allowed_effects.includes(firstWord)) {
+          if (firstWord && settings.allowed_effects.includes(firstWord)) {
             const span = document.createElement("span");
             span.className = `emoji-fluff-wrapper ${firstWord}`;
 
