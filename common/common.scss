@@ -40,32 +40,33 @@
   }
 }
 
-.flip img {
+.flip {
   transform: scaleX(-1);
 }
 
-.flip-v img {
+.flip-v {
   transform: scaleY(-1);
 }
 
 .spin {
-  display: inline-block;
   animation: spin 2s linear infinite;
 }
 
 .pulse {
-  display: inline-block;
   animation: pulse 1s infinite;
 }
 
 .bounce {
-  display: inline-block;
   animation: bounce 0.8s infinite;
 }
 
 .wobble {
-  display: inline-block;
   animation: wobble 0.5s infinite;
+}
+
+.emoji-fluff-wrapper {
+  display: inline-flex;
+  vertical-align: text-bottom;
 }
 
 .fluff-emoji.autocomplete {
