@@ -1,2 +1,5 @@
-example_setting:
-  default: true
+allowed_effects:
+  default: "flip|flip-v|spin|pulse|bounce|wobble"
+  type: "list"
+  description: "List of allowed effects"
+  choices: ["flip", "flip-v", "spin", "pulse", "bounce", "wobble"]

@@ -1,0 +1,117 @@
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes wobble {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-10deg);
+  }
+  75% {
+    transform: rotate(10deg);
+  }
+}
+
+.flip img {
+  transform: scaleX(-1);
+}
+
+.flip-v img {
+  transform: scaleY(-1);
+}
+
+.spin {
+  display: inline-block;
+  animation: spin 2s linear infinite;
+}
+
+.pulse {
+  display: inline-block;
+  animation: pulse 1s infinite;
+}
+
+.bounce {
+  display: inline-block;
+  animation: bounce 0.8s infinite;
+}
+
+.wobble {
+  display: inline-block;
+  animation: wobble 0.5s infinite;
+}
+
+.fluff-emoji.autocomplete {
+  display: flex;
+
+  .fluff-selector-wrapper {
+    &:first-of-type a {
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
+    }
+
+    &:last-of-type a {
+      border-bottom-left-radius: 8px;
+      border-bottom-right-radius: 8px;
+    }
+
+    .fluff {
+      @include hover {
+        background-color: var(--d-hover);
+        text-decoration: none;
+      }
+
+      &.selected {
+        background-color: var(--d-selected);
+      }
+    }
+  }
+
+  ul {
+    flex: 1;
+
+    li {
+      @include hover {
+        background-color: var(--d-hover);
+        text-decoration: none;
+      }
+
+      &:first-of-type a {
+        border-top-left-radius: 0px;
+        border-top-right-radius: 0px;
+      }
+
+      &:last-of-type a {
+        border-bottom-left-radius: 0px;
+        border-bottom-right-radius: 0px;
+      }
+    }
+  }
+}
