@@ -70,8 +70,6 @@
 }
 
 .fluff-emoji.autocomplete {
-  display: flex;
-
   .fluff-selector-wrapper {
     &:first-of-type a {
       border-top-left-radius: 8px;
@@ -96,9 +94,13 @@
   }
 
   ul {
-    flex: 1;
-
     li {
+      display: flex;
+
+      a {
+        flex: 1;
+      }
+
       @include hover {
         background-color: var(--d-hover);
         text-decoration: none;

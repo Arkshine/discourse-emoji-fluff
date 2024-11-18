@@ -2,7 +2,7 @@
 <div class='autocomplete ac-emoji fluff-emoji'>
   <ul>
     {{#each options as |option|}}
-      <li data-code={{option.code}} style="display: flex; justify-content: space-between">
+      <li data-code={{option.code}}>
         <a href>
           {{#if option.src}}
             <img src={{option.src}} class='emoji'>
