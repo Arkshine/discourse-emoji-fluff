@@ -52,7 +52,7 @@ export default class FluffSelector extends Component {
                 <DButton
                   @translatedTitle={{effect}}
                   @action={{fn this.click effect}}
-                  class={{"btn-transparent"}}
+                  class="btn-transparent"
                 >
                   <img
                     src={{@option.src}}
