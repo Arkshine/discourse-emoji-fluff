@@ -135,7 +135,12 @@
           {{/each}}
         </div>
 
-        <FluffSelector @option={{hash code="clap" context="emoji-picker"}} />
+        <FluffSelector
+          @option={{hash
+            code=(if this.hoveredEmoji this.hoveredEmoji "rocket")
+            context="emoji-picker"
+          }}
+        />
       </div>
     </div>
   </div>
