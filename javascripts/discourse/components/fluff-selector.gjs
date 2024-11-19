@@ -46,22 +46,15 @@ export default class FluffSelector extends Component {
           {{dIcon "wand-magic-sparkles"}}
         </:trigger>
         <:content>
-          <DropdownMenu as |dropdown|>
-            {{#each this.allowedEffects as |effect|}}
-              <dropdown.item>
-                <DButton
-                  @translatedTitle={{effect}}
-                  @action={{fn this.click effect}}
-                  class="btn-transparent"
-                >
-                  <img
-                    src={{@option.src}}
-                    class={{concatClass "emoji" effect}}
-                  />
-                </DButton>
-              </dropdown.item>
-            {{/each}}
-          </DropdownMenu>
+          {{#each this.allowedEffects as |effect|}}
+            <DButton
+              @translatedTitle={{effect}}
+              @action={{fn this.click effect}}
+              class="btn-transparent"
+            >
+              <img src={{@option.src}} class={{concatClass "emoji" effect}} />
+            </DButton>
+          {{/each}}
         </:content>
       </DTooltip>
     {{/if}}
