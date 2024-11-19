@@ -8,35 +8,29 @@
 }
 
 @keyframes pulse {
-  0%,
-  100% {
+  from {
     transform: scale(1);
   }
-  50% {
+  to {
     transform: scale(1.2);
   }
 }
 
 @keyframes bounce {
-  0%,
-  100% {
+  from {
     transform: translateY(0);
   }
-  50% {
-    transform: translateY(-10px);
+  to {
+    transform: translateY(-7px);
   }
 }
 
 @keyframes wobble {
-  0%,
-  100% {
-    transform: rotate(0deg);
+  from {
+    transform: rotate(45deg);
   }
-  25% {
-    transform: rotate(-10deg);
-  }
-  75% {
-    transform: rotate(10deg);
+  to {
+    transform: rotate(-45deg);
   }
 }
 
@@ -53,15 +47,15 @@
 }
 
 .pulse {
-  animation: pulse 1s infinite;
+  animation: pulse 1s infinite alternate ease-in-out;
 }
 
 .bounce {
-  animation: bounce 0.8s infinite;
+  animation: bounce 0.4s infinite alternate-reverse cubic-bezier(0, 0, 0.5, 1);;
 }
 
 .wobble {
-  animation: wobble 0.5s infinite;
+  animation: wobble 0.8s infinite alternate-reverse ease-in-out;
 }
 
 .emoji-fluff-wrapper {
