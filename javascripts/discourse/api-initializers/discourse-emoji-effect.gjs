@@ -45,6 +45,37 @@ export default apiInitializer("1.8.0", (api) => {
           }
         }
       });
+
+      element.querySelectorAll(".emoji-fluff-wrapper").forEach((wrapper) => {
+        const parent = wrapper.parentElement;
+        const siblings = Array.from(parent.children);
+
+        const emojiSiblings = siblings.filter(
+          (sibling) =>
+            sibling.classList.contains("emoji-fluff-wrapper") ||
+            (sibling.tagName === "IMG" && sibling.classList.contains("emoji"))
+        );
+
+        if (
+          emojiSiblings.length <= 3 &&
+          emojiSiblings.every((sibling) =>
+            [...sibling.childNodes].every(
+              (node) => node.nodeType === Node.ELEMENT_NODE
+            )
+          )
+        ) {
+          emojiSiblings.forEach((sibling) => {
+            if (sibling.tagName === "SPAN") {
+              const img = sibling.querySelector("img");
+              if (img) {
+                img.classList.add("only-emoji");
+              }
+            } else if (sibling.tagName === "IMG") {
+              sibling.classList.add("only-emoji");
+            }
+          });
+        }
+      });
     },
     { afterAdopt: true }
   );
