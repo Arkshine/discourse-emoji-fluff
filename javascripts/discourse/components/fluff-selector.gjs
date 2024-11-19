@@ -4,7 +4,6 @@ import { action } from "@ember/object";
 import { service } from "@ember/service";
 import DButton from "discourse/components/d-button";
 import DTooltip from "discourse/components/d-tooltip";
-import DropdownMenu from "discourse/components/dropdown-menu";
 import concatClass from "discourse/helpers/concat-class";
 import dIcon from "discourse-common/helpers/d-icon";
 

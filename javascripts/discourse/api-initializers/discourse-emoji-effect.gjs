@@ -58,6 +58,29 @@ export default apiInitializer("1.8.0", (api) => {
     }
   });
 
+  function closestSquareGrid(elements) {
+    const dimension = Math.ceil(Math.sqrt(elements));
+    let rows = dimension;
+    let columns = dimension;
+
+    while (rows * columns < elements.length) {
+      if (rows <= columns) {
+        rows++;
+      } else {
+        columns++;
+      }
+    }
+
+    return { rows, columns };
+  }
+
+  document
+    .querySelector(":root")
+    .style.setProperty(
+      "--fluff-selector-columns",
+      closestSquareGrid(allowedEffects.split("|").length).columns
+    );
+
   api.modifyClass(
     "component:d-editor",
     (Superclass) =>

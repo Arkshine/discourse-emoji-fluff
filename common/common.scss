@@ -118,3 +118,12 @@
     }
   }
 }
+
+.fluff-selector-dropdown-content {
+  max-width: 100% !important;
+
+  .fk-d-tooltip__inner-content {
+    display: grid;
+    grid-template-columns: repeat(var(--fluff-selector-columns, 3), 1fr);
+  }
+}
