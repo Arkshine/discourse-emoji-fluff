@@ -9,17 +9,24 @@ import dIcon from "discourse-common/helpers/d-icon";
 
 export default class FluffSelector extends Component {
   @service tooltip;
+  @service site;
 
   get allowedEffects() {
     return settings.allowed_effects.split("|");
   }
 
   @action
-  click(effect) {
-    if (typeof effect !== "string") {
+  click(event) {
+    if (!this.site.mobileView) {
       return;
     }
 
+    event.preventDefault();
+    event.stopImmediatePropagation();
+  }
+
+  @action
+  choosenFluff(effect) {
     const li = this.element
       .closest(".fluff-emoji")
       .querySelector(`[data-code=${this.option.code}]`);
@@ -28,7 +35,7 @@ export default class FluffSelector extends Component {
       this.option.fluff = effect;
       this.tooltip.close("fluff-selector-dropdown");
 
-      li?.dispatchEvent(new CustomEvent("click"));
+      li.dispatchEvent(new CustomEvent("click"));
     }
   }
 
@@ -48,7 +55,7 @@ export default class FluffSelector extends Component {
           {{#each this.allowedEffects as |effect|}}
             <DButton
               @translatedTitle={{effect}}
-              @action={{fn this.click effect}}
+              @action={{fn this.choosenFluff effect}}
               class="btn-transparent"
             >
               <img src={{@option.src}} class={{concatClass "emoji" effect}} />
