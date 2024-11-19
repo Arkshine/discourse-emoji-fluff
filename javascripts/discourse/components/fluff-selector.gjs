@@ -39,7 +39,7 @@ export default class FluffSelector extends Component {
         @identifier="fluff-selector-dropdown"
         @placement="right"
         @interactive={{true}}
-        @maxWidth="70"
+        @animated={{false}}
         class="btn btn-flat btn-fluff"
       >
         <:trigger>
