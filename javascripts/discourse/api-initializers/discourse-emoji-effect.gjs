@@ -1,4 +1,7 @@
+import { action } from "@ember/object";
 import { schedule } from "@ember/runloop";
+import { service } from "@ember/service";
+import { isEmpty } from "@ember/utils";
 import { emojiSearch, isSkinTonableEmoji } from "pretty-text/emoji";
 import { translations } from "pretty-text/emoji/data";
 import { apiInitializer } from "discourse/lib/api";
@@ -80,6 +83,71 @@ export default apiInitializer("1.8.0", (api) => {
       "--fluff-selector-columns",
       closestSquareGrid(allowedEffects.split("|").length).columns
     );
+
+  function emojiSelectedWitFluff(code, fluff) {
+    let selected = this.getSelected();
+    const captures = selected.pre.match(/\B:(\w*)$/);
+
+    if (isEmpty(captures)) {
+      if (selected.pre.match(/\S$/)) {
+        this.addText(selected, ` :${code}:${fluff}`);
+      } else {
+        this.addText(selected, `:${code}:${fluff}`);
+      }
+    } else {
+      let numOfRemovedChars = captures[1].length;
+      this._insertAt(
+        selected.start - numOfRemovedChars,
+        selected.end,
+        `${code}:${fluff}`
+      );
+    }
+  }
+
+  api.modifyClass(
+    "component:emoji-picker",
+    (Superclass) =>
+      class extends Superclass {
+        @service fluffSelection;
+
+        @action
+        onClose(event) {
+          this.fluffSelection.clear();
+          super.onClose(event);
+        }
+
+        @action
+        onEmojiSelectionWithFluff(event) {
+          if (!this.fluffSelection.selected) {
+            this.onEmojiSelection(event);
+            return false;
+          }
+
+          const img = event.target;
+
+          if (!img.classList.contains("emoji") || img.tagName !== "IMG") {
+            return false;
+          }
+
+          let code = event.target.title;
+          code = this._codeWithDiversity(code, this.selectedDiversity);
+
+          emojiSelectedWitFluff.call(
+            this.parentView.textManipulation,
+            code,
+            this.fluffSelection.selected
+          );
+
+          this._trackEmojiUsage(code, {
+            refresh: !img.parentNode.parentNode.classList.contains("recent"),
+          });
+
+          if (this.site.isMobileDevice) {
+            this.onClose(event);
+          }
+        }
+      }
+  );
 
   api.modifyClass(
     "component:d-editor",

@@ -51,7 +51,7 @@
 }
 
 .bounce {
-  animation: bounce 0.4s infinite alternate-reverse cubic-bezier(0, 0, 0.5, 1);;
+  animation: bounce 0.4s infinite alternate-reverse cubic-bezier(0, 0, 0.5, 1);
 }
 
 .wobble {
@@ -113,11 +113,32 @@
   }
 }
 
+.btn-fluff-selector .fluff-selected {
+  position: absolute;
+  font-size: var(--font-down-6);
+  color: var(--tertiary-med-or-tertiary);
+  bottom: 3em;
+  right: 1em;
+}
+
 .fluff-selector-dropdown-content {
   max-width: 100% !important;
 
   .fk-d-tooltip__inner-content {
     display: grid;
     grid-template-columns: repeat(var(--fluff-selector-columns, 3), 1fr);
+
+    .btn-fluff {
+      @include hover {
+        background: none !important;
+        border-color: rgba(0, 0, 0, 0) !important;
+        transform: scale(1.2);
+      }
+
+      &.-selected {
+        outline: 2px solid var(--d-selected);
+        outline-offset: -3px;
+      }
+    }
   }
 }

@@ -1,18 +1,25 @@
 import Component from "@ember/component";
-import { fn } from "@ember/helper";
+import { concat, fn, hash } from "@ember/helper";
 import { action } from "@ember/object";
 import { service } from "@ember/service";
+import { and, eq } from "truth-helpers";
 import DButton from "discourse/components/d-button";
 import DTooltip from "discourse/components/d-tooltip";
 import concatClass from "discourse/helpers/concat-class";
+import replaceEmoji from "discourse/helpers/replace-emoji";
 import dIcon from "discourse-common/helpers/d-icon";
 
 export default class FluffSelector extends Component {
   @service tooltip;
   @service site;
+  @service fluffSelection;
 
   get allowedEffects() {
     return settings.allowed_effects.split("|");
+  }
+
+  get isEmojiPickerContext() {
+    return this.option?.context === "emoji-picker";
   }
 
   @action
@@ -26,7 +33,14 @@ export default class FluffSelector extends Component {
   }
 
   @action
-  choosenFluff(effect) {
+  selectFluff(effect) {
+    if (this.isEmojiPickerContext) {
+      this.fluffSelection.update(
+        this.fluffSelection.selected === effect ? "" : effect
+      );
+      return;
+    }
+
     const li = this.element
       .closest(".fluff-emoji")
       .querySelector(`[data-code=${this.option.code}]`);
@@ -46,19 +60,32 @@ export default class FluffSelector extends Component {
         @placement="right"
         @interactive={{true}}
         @animated={{false}}
-        class="btn btn-flat btn-fluff"
+        class="btn btn-flat btn-fluff-selector"
       >
         <:trigger>
           {{dIcon "wand-magic-sparkles"}}
+          {{#if (and this.fluffSelection.selected this.isEmojiPickerContext)}}
+            {{dIcon "circle" class="fluff-selected"}}
+          {{/if}}
         </:trigger>
         <:content>
           {{#each this.allowedEffects as |effect|}}
             <DButton
               @translatedTitle={{effect}}
-              @action={{fn this.choosenFluff effect}}
-              class="btn-transparent"
+              @action={{fn this.selectFluff effect}}
+              class={{concatClass
+                "btn-transparent btn-fluff"
+                (if (eq this.fluffSelection.selected effect) "-selected")
+              }}
             >
-              <img src={{@option.src}} class={{concatClass "emoji" effect}} />
+              {{#if @option.src}}
+                <img src={{@option.src}} class={{concatClass "emoji" effect}} />
+              {{else}}
+                {{replaceEmoji
+                  (concat ":" @option.code ":")
+                  (hash class=effect)
+                }}
+              {{/if}}
             </DButton>
           {{/each}}
         </:content>
