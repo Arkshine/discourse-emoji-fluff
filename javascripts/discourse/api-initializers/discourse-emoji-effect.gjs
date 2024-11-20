@@ -9,6 +9,7 @@ import { SKIP } from "discourse/lib/autocomplete";
 import { emojiUrlFor } from "discourse/lib/text";
 import { findRawTemplate } from "discourse-common/lib/raw-templates";
 import I18n from "discourse-i18n";
+import FluffSelector from "../components/fluff-selector";
 
 export default apiInitializer("1.8.0", (api) => {
   const allowedEffects = settings.allowed_effects;
@@ -19,7 +20,7 @@ export default apiInitializer("1.8.0", (api) => {
 
   api.decorateCookedElement(
     (element /*, helper*/) => {
-      const images = element.querySelectorAll("img");
+      const images = element.querySelectorAll("img.emoji");
 
       images.forEach((img) => {
         const nextSibling = img.nextSibling;
@@ -139,17 +140,25 @@ export default apiInitializer("1.8.0", (api) => {
     "component:emoji-picker",
     (Superclass) =>
       class extends Superclass {
-        @service fluffSelection;
+        @service fluffEmojiPicker;
+        @service tooltip;
 
         @action
         onClose(event) {
-          this.fluffSelection.clear();
+          if (this.fluffEmojiPicker.selectedEmoji) {
+            return;
+          }
+
           super.onClose(event);
         }
 
         @action
         onEmojiSelectionWithFluff(event) {
-          if (!this.fluffSelection.selected) {
+          if (
+            !this.fluffEmojiPicker.enabled ||
+            (this.fluffEmojiPicker.selectedEmoji &&
+              !this.fluffEmojiPicker.selectedFluff)
+          ) {
             this.onEmojiSelection(event);
             return false;
           }
@@ -160,22 +169,42 @@ export default apiInitializer("1.8.0", (api) => {
             return false;
           }
 
-          let code = event.target.title;
-          code = this._codeWithDiversity(code, this.selectedDiversity);
+          if (!this.fluffEmojiPicker.selectedEmoji) {
+            let code = event.target.title;
+            code = this._codeWithDiversity(code, this.selectedDiversity);
 
-          emojiSelectedWitFluff.call(
-            this.parentView.textManipulation,
-            code,
-            this.fluffSelection.selected
-          );
+            this.fluffEmojiPicker.selectedEmoji = code;
+            this.fluffEmojiPicker.selectedTarget = event.target;
 
-          this._trackEmojiUsage(code, {
-            refresh: !img.parentNode.parentNode.classList.contains("recent"),
-          });
+            this.tooltip.show(event.target, {
+              component: FluffSelector,
+              identifier: "fluff-selector-dropdown",
+              onClose: () => {
+                this.fluffEmojiPicker.selectedEmoji = null;
+                this.fluffEmojiPicker.selectedTarget = null;
+              },
+              data: {
+                code,
+                context: "emoji-picker",
+              },
+            });
+          } else {
+            emojiSelectedWitFluff.call(
+              this.parentView.textManipulation,
+              this.fluffEmojiPicker.selectedEmoji,
+              this.fluffEmojiPicker.selectedFluff
+            );
 
-          if (this.site.isMobileDevice) {
-            this.onClose(event);
+            this._trackEmojiUsage(this.fluffEmojiPicker.selectedEmoji, {
+              refresh: !img.parentNode.parentNode.classList.contains("recent"),
+            });
+
+            if (this.site.isMobileDevice) {
+              this.onClose(event);
+            }
           }
+
+          return false;
         }
       }
   );

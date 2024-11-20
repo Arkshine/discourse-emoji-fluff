@@ -1,13 +1,13 @@
 import EmberObject from "@ember/object";
 import rawRenderGlimmer from "discourse/lib/raw-render-glimmer";
-import FluffSelector from "../components/fluff-selector";
+import FluffSelectorTooltip from "../components/fluff-selector-tooltip";
 
 export default class FluffSelectorWrapper extends EmberObject {
   get html() {
     return rawRenderGlimmer(
       this,
       "div.fluff-selector",
-      <template><FluffSelector @option={{@data.option}} /></template>,
+      <template><FluffSelectorTooltip @option={{@data.option}} /></template>,
       { option: this.option }
     );
   }

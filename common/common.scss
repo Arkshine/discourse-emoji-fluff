@@ -63,7 +63,7 @@
   vertical-align: text-bottom;
 }
 
-.fluff-emoji.autocomplete {
+.autocomplete.with-fluff {
   .fluff-selector-wrapper {
     &:first-of-type a {
       border-top-left-radius: 8px;
@@ -121,10 +121,10 @@
   right: 1em;
 }
 
-.fluff-selector-dropdown-content {
+[data-identifier="fluff-selector-dropdown"] {
   max-width: 100% !important;
 
-  .fk-d-tooltip__inner-content {
+  .fk-d-tooltip__inner-content > div {
     display: grid;
     grid-template-columns: repeat(var(--fluff-selector-columns, 3), 1fr);
 
@@ -139,6 +139,37 @@
         outline: 2px solid var(--d-selected);
         outline-offset: -3px;
       }
+    }
+  }
+}
+
+.simple-toggle-switch {
+  .emoji-picker-footer & {
+    padding-right: 0.5em;
+  }
+
+  &__icon {
+    position: relative;
+
+    color: var(--primary-high);
+
+    padding: 0.45em;
+    border-radius: 50%;
+    vertical-align: middle;
+
+    transition: all 0.3s;
+
+    cursor: pointer;
+
+    &:hover {
+      background: var(--d-hover);
+    }
+
+    &.--checked {
+      color: var(--secondary);
+      background: var(--tertiary-high);
+      outline: 2px solid
+        color-mix(in srgb, var(--tertiary-medium), transparent 50%);
     }
   }
 }

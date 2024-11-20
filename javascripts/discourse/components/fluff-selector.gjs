@@ -1,25 +1,24 @@
 import Component from "@ember/component";
 import { concat, fn, hash } from "@ember/helper";
+import { on } from "@ember/modifier";
 import { action } from "@ember/object";
 import { service } from "@ember/service";
-import { and, eq } from "truth-helpers";
+import { eq } from "truth-helpers";
 import DButton from "discourse/components/d-button";
-import DTooltip from "discourse/components/d-tooltip";
 import concatClass from "discourse/helpers/concat-class";
 import replaceEmoji from "discourse/helpers/replace-emoji";
-import dIcon from "discourse-common/helpers/d-icon";
 
 export default class FluffSelector extends Component {
   @service tooltip;
   @service site;
-  @service fluffSelection;
+  @service fluffEmojiPicker;
 
   get allowedEffects() {
     return settings.allowed_effects.split("|");
   }
 
   get isEmojiPickerContext() {
-    return this.option?.context === "emoji-picker";
+    return this.data?.context === "emoji-picker";
   }
 
   @action
@@ -33,20 +32,34 @@ export default class FluffSelector extends Component {
   }
 
   @action
+  onMouseHover(effect) {
+    this.fluffEmojiPicker.hoveredFluff = effect;
+  }
+
+  @action
+  onMouseOut() {
+    this.fluffEmojiPicker.hoveredFluff = "";
+  }
+
+  @action
   selectFluff(effect) {
     if (this.isEmojiPickerContext) {
-      this.fluffSelection.update(
-        this.fluffSelection.selected === effect ? "" : effect
+      this.fluffEmojiPicker.selectedFluff = effect;
+      this.fluffEmojiPicker.selectedTarget?.dispatchEvent(
+        new MouseEvent("click", {
+          bubbles: true,
+          cancelable: true,
+        })
       );
       return;
     }
 
-    const li = this.element
-      .closest(".fluff-emoji")
-      .querySelector(`[data-code=${this.option.code}]`);
+    const li = document.querySelector(
+      `.autocomplete.with-fluff [data-code=${this.data.code}]`
+    );
 
     if (li) {
-      this.option.fluff = effect;
+      this.data.fluff = effect;
       this.tooltip.close("fluff-selector-dropdown");
 
       li.dispatchEvent(new CustomEvent("click"));
@@ -54,42 +67,23 @@ export default class FluffSelector extends Component {
   }
 
   <template>
-    {{#if @option.code}}
-      <DTooltip
-        @identifier="fluff-selector-dropdown"
-        @placement="right"
-        @interactive={{true}}
-        @animated={{false}}
-        class="btn btn-flat btn-fluff-selector"
+    {{#each this.allowedEffects as |effect|}}
+      <DButton
+        @translatedTitle={{effect}}
+        @action={{fn this.selectFluff effect}}
+        class={{concatClass
+          "btn-transparent btn-fluff"
+          (if (eq this.fluffSelection.selectedFluff effect) "-selected")
+        }}
+        {{on "mouseover" (fn this.onMouseHover effect)}}
+        {{on "mouseout" (fn this.onMouseOut effect)}}
       >
-        <:trigger>
-          {{dIcon "wand-magic-sparkles"}}
-          {{#if (and this.fluffSelection.selected this.isEmojiPickerContext)}}
-            {{dIcon "circle" class="fluff-selected"}}
-          {{/if}}
-        </:trigger>
-        <:content>
-          {{#each this.allowedEffects as |effect|}}
-            <DButton
-              @translatedTitle={{effect}}
-              @action={{fn this.selectFluff effect}}
-              class={{concatClass
-                "btn-transparent btn-fluff"
-                (if (eq this.fluffSelection.selected effect) "-selected")
-              }}
-            >
-              {{#if @option.src}}
-                <img src={{@option.src}} class={{concatClass "emoji" effect}} />
-              {{else}}
-                {{replaceEmoji
-                  (concat ":" @option.code ":")
-                  (hash class=effect)
-                }}
-              {{/if}}
-            </DButton>
-          {{/each}}
-        </:content>
-      </DTooltip>
-    {{/if}}
+        {{#if @data.src}}
+          <img src={{@data.src}} class={{concatClass "emoji" effect}} />
+        {{else}}
+          {{replaceEmoji (concat ":" @data.code ":") (hash class=effect)}}
+        {{/if}}
+      </DButton>
+    {{/each}}
   </template>
 }

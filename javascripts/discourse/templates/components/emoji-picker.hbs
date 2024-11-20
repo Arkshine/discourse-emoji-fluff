@@ -116,11 +116,13 @@
 
       <div class="emoji-picker-footer">
         <div class="emoji-picker-emoji-info">
-          {{#if this.hoveredEmoji}}
+          {{#if this.fluffEmojiPicker.selectedEmoji}}
             {{replace-emoji
-              (concat ":" this.hoveredEmoji ":")
-              class=this.fluffSelection.selected
+              (concat ":" this.fluffEmojiPicker.selectedEmoji ":")
+              class=this.fluffEmojiPicker.hoveredFluff
             }}
+          {{else if this.hoveredEmoji}}
+            {{replace-emoji (concat ":" this.hoveredEmoji ":")}}
           {{/if}}
         </div>
 
@@ -135,13 +137,9 @@
           {{/each}}
         </div>
 
-        <FluffSelector
-          @option={{hash
-            code=(if this.hoveredEmoji this.hoveredEmoji "rocket")
-            context="emoji-picker"
-          }}
-        />
+        <FluffToggleSwitch @icon="wand-magic-sparkles" />
       </div>
+
     </div>
   </div>
 
