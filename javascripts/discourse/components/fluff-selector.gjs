@@ -38,7 +38,9 @@ export default class FluffSelector extends Component {
 
   @action
   onMouseOut() {
+    this.fluffEmojiPicker.hoveredTarget = null;
     this.fluffEmojiPicker.hoveredFluff = "";
+    this.fluffEmojiPicker.selectedFluff = "";
   }
 
   @action
@@ -46,7 +48,7 @@ export default class FluffSelector extends Component {
     if (this.isEmojiPickerContext) {
       this.fluffEmojiPicker.selectedFluff = effect;
       this.fluffEmojiPicker.selectedTarget?.dispatchEvent(
-        new MouseEvent("click", {
+        new CustomEvent("click", {
           bubbles: true,
           cancelable: true,
         })

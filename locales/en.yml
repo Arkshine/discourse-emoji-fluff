@@ -1,5 +1,11 @@
 en:
   theme_metadata:
-    description: ''
+    description: ""
     settings:
       example_setting: A description of a setting.
+
+  fluff_selector:
+    toggle_switch:
+      toggle: "Toggle Emoji Decoration"
+      enabled: "Enabled Emoji Decoration!"
+      disabled: "Disabled Emoji Decoration!"

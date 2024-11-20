@@ -10,6 +10,7 @@ import { emojiUrlFor } from "discourse/lib/text";
 import { findRawTemplate } from "discourse-common/lib/raw-templates";
 import I18n from "discourse-i18n";
 import FluffSelector from "../components/fluff-selector";
+import { FLUFF_EMOJI_PICKER_ID } from "../services/fluff-emoji-picker";
 
 export default apiInitializer("1.8.0", (api) => {
   const allowedEffects = settings.allowed_effects;
@@ -27,18 +28,20 @@ export default apiInitializer("1.8.0", (api) => {
 
         if (nextSibling && nextSibling.nodeType === Node.TEXT_NODE) {
           const textContent = nextSibling.nodeValue;
-          const firstWord = textContent.split(" ")[0];
 
-          if (firstWord && settings.allowed_effects.includes(firstWord)) {
+          const result = /^(?<effect>[^:]+):/.exec(textContent);
+          const effect = result?.groups?.effect;
+          const restOfText = effect
+            ? textContent.slice(effect.length + 1)
+            : textContent;
+
+          if (effect && settings.allowed_effects.includes(effect)) {
             const span = document.createElement("span");
-            span.className = `emoji-fluff-wrapper ${firstWord}`;
-
+            span.className = `emoji-fluff-wrapper ${effect}`;
             img.parentNode.insertBefore(span, img);
             span.appendChild(img);
 
-            const restOfText = textContent.slice(firstWord.length);
-
-            if (restOfText.trim()) {
+            if (restOfText) {
               nextSibling.nodeValue = restOfText;
             } else {
               nextSibling.remove();
@@ -47,51 +50,87 @@ export default apiInitializer("1.8.0", (api) => {
         }
       });
 
-      element.querySelectorAll(".emoji-fluff-wrapper").forEach((wrapper) => {
-        const parent = wrapper.parentElement;
-        const siblings = Array.from(parent.children);
+      const paragraphs = element.querySelectorAll("p");
 
-        const emojiSiblings = siblings.filter(
-          (sibling) =>
-            sibling.classList.contains("emoji-fluff-wrapper") ||
-            (sibling.tagName === "IMG" && sibling.classList.contains("emoji"))
-        );
+      paragraphs.forEach((paragraph) => {
+        const children = Array.from(paragraph.childNodes);
+        let emojiGroup = [];
+        let validLine = true;
 
-        if (
-          emojiSiblings.length <= 3 &&
-          emojiSiblings.every((sibling) =>
-            [...sibling.childNodes].every(
-              (node) => node.nodeType === Node.ELEMENT_NODE
-            )
-          )
-        ) {
-          emojiSiblings.forEach((sibling) => {
-            if (sibling.tagName === "SPAN") {
-              const img = sibling.querySelector("img");
-              if (img) {
-                img.classList.add("only-emoji");
-              }
-            } else if (sibling.tagName === "IMG") {
-              sibling.classList.add("only-emoji");
+        children.forEach((node, index) => {
+          if (node.nodeType === Node.ELEMENT_NODE) {
+            const isWrapperEmoji =
+              node.matches("span.emoji-fluff-wrapper") &&
+              node.querySelector("img.emoji");
+            const isDirectEmoji = node.matches("img.emoji");
+
+            if (isWrapperEmoji || isDirectEmoji) {
+              emojiGroup.push(node);
+            } else if (!node.matches("br")) {
+              validLine = false;
             }
-          });
-        }
+          } else if (node.nodeType === Node.TEXT_NODE) {
+            if (node.nodeValue.trim() !== "") {
+              validLine = false;
+            }
+          }
+
+          const nextNode = children[index + 1];
+
+          if (
+            emojiGroup.length >= 1 &&
+            validLine &&
+            (!nextNode ||
+              (nextNode.nodeType === Node.ELEMENT_NODE &&
+                nextNode.matches("br")))
+          ) {
+            let spaceCount = 0;
+
+            for (
+              let i = Math.max(0, index - emojiGroup.length);
+              i < index;
+              i++
+            ) {
+              const child = children[i];
+              if (
+                child.nodeType === Node.TEXT_NODE &&
+                child.nodeValue === " "
+              ) {
+                spaceCount++;
+              }
+            }
+
+            if (spaceCount >= emojiGroup.length - 1) {
+              const hasWrapperEmoji = emojiGroup.some((e) =>
+                e.matches("span.emoji-fluff-wrapper")
+              );
+              const allDirectEmoji = emojiGroup.every((e) =>
+                e.matches("img.emoji")
+              );
+
+              if (hasWrapperEmoji || !allDirectEmoji) {
+                emojiGroup.forEach((emoji) => {
+                  emoji.classList.add("only-emoji");
+                  if (emoji.matches("span.emoji-fluff-wrapper")) {
+                    emoji
+                      .querySelector("img.emoji")
+                      ?.classList.add("only-emoji");
+                  }
+                });
+              }
+            }
+
+            emojiGroup = [];
+            validLine = true;
+          } else if (!validLine || (!nextNode && emojiGroup.length < 1)) {
+            emojiGroup = [];
+            validLine = true;
+          }
+        });
       });
     },
     { afterAdopt: true }
   );
-
-  window.addEventListener("click", (event) => {
-    const target = event.target;
-
-    if (
-      target?.parentElement?.dataset?.identifier === "fluff-selector-dropdown"
-    ) {
-      event.preventDefault();
-      event.stopImmediatePropagation();
-      return false;
-    }
-  });
 
   function closestSquareGrid(elements) {
     const dimension = Math.ceil(Math.sqrt(elements));
@@ -122,16 +161,16 @@ export default apiInitializer("1.8.0", (api) => {
 
     if (isEmpty(captures)) {
       if (selected.pre.match(/\S$/)) {
-        this.addText(selected, ` :${code}:${fluff}`);
+        this.addText(selected, ` :${code}:${fluff}:`);
       } else {
-        this.addText(selected, `:${code}:${fluff}`);
+        this.addText(selected, `:${code}:${fluff}:`);
       }
     } else {
       let numOfRemovedChars = captures[1].length;
       this._insertAt(
         selected.start - numOfRemovedChars,
         selected.end,
-        `${code}:${fluff}`
+        `${code}:${fluff}:`
       );
     }
   }
@@ -142,14 +181,21 @@ export default apiInitializer("1.8.0", (api) => {
       class extends Superclass {
         @service fluffEmojiPicker;
         @service tooltip;
+        @service site;
 
         @action
         onClose(event) {
-          if (this.fluffEmojiPicker.selectedEmoji) {
-            return;
+          if (
+            !(
+              this.fluffEmojiPicker.enabled &&
+              this.fluffEmojiPicker.selectedEmoji &&
+              !this.site.isMobileDevice
+            )
+          ) {
+            super.onClose(event);
           }
 
-          super.onClose(event);
+          this.fluffEmojiPicker.clear();
         }
 
         @action
@@ -160,7 +206,7 @@ export default apiInitializer("1.8.0", (api) => {
               !this.fluffEmojiPicker.selectedFluff)
           ) {
             this.onEmojiSelection(event);
-            return false;
+            return;
           }
 
           const img = event.target;
@@ -178,7 +224,7 @@ export default apiInitializer("1.8.0", (api) => {
 
             this.tooltip.show(event.target, {
               component: FluffSelector,
-              identifier: "fluff-selector-dropdown",
+              identifier: FLUFF_EMOJI_PICKER_ID,
               onClose: () => {
                 this.fluffEmojiPicker.selectedEmoji = null;
                 this.fluffEmojiPicker.selectedTarget = null;
@@ -244,8 +290,11 @@ export default apiInitializer("1.8.0", (api) => {
             transformComplete: (v) => {
               if (v.code) {
                 this.emojiStore.track(v.code);
-                const fluff = v.fluff || "";
-                return `${v.code}:${fluff}`;
+                let code = `${v.code}:`;
+                if (v.fluff) {
+                  code += `${v.fluff}:`;
+                }
+                return code;
               } else {
                 this.textManipulation.autocomplete({ cancel: true });
                 this.set("emojiPickerIsActive", true);

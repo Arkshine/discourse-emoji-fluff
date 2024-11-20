@@ -1,33 +1,41 @@
 import Component from "@glimmer/component";
-import { on } from "@ember/modifier";
 import { action } from "@ember/object";
 import { service } from "@ember/service";
+import DButton from "discourse/components/d-button";
 import concatClass from "discourse/helpers/concat-class";
 import dIcon from "discourse-common/helpers/d-icon";
+import actionFeedback from "../lib/action-feedback";
 
 export default class FluffToggleSwitch extends Component {
   @service fluffEmojiPicker;
 
   @action
-  toggle(event) {
+  toggle() {
     this.fluffEmojiPicker.enabled = !this.fluffEmojiPicker.enabled;
 
-    event.preventDefault();
-    event.stopPropagation();
+    actionFeedback({
+      selectorClass: ".emoji-picker.opened .fluff-toggle-switch",
+      messageKey: themePrefix(
+        this.fluffEmojiPicker.enabled
+          ? "fluff_selector.toggle_switch.enabled"
+          : "fluff_selector.toggle_switch.disabled"
+      ),
+    });
   }
 
   <template>
-    <div
-      class={{concatClass @class "simple-toggle-switch"}}
-      {{on "click" this.toggle}}
+    <DButton
+      @class={{concatClass @class "btn-flat fluff-toggle-switch"}}
+      @action={{this.toggle}}
+      @translatedTitle={{@title}}
     >
       {{dIcon
         @icon
         class=(concatClass
-          "simple-toggle-switch__icon"
+          "fluff-toggle-switch__icon"
           (if this.fluffEmojiPicker.enabled "--checked")
         )
       }}
-    </div>
+    </DButton>
   </template>
 }
