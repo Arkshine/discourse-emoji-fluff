@@ -12,6 +12,8 @@ import I18n from "discourse-i18n";
 import FluffSelector from "../components/fluff-selector";
 import { FLUFF_EMOJI_PICKER_ID } from "../services/fluff-emoji-picker";
 
+const FLUFF_PREFIX = "f-";
+
 export default apiInitializer("1.8.0", (api) => {
   const allowedEffects = settings.allowed_effects;
 
@@ -31,13 +33,22 @@ export default apiInitializer("1.8.0", (api) => {
 
           const result = /^(?<effect>[^:]+):/.exec(textContent);
           const effect = result?.groups?.effect;
+
+          if (!effect || !effect.startsWith(FLUFF_PREFIX)) {
+            return;
+          }
+
+          const effectWithoutPrefix = effect.replace(FLUFF_PREFIX, "");
           const restOfText = effect
             ? textContent.slice(effect.length + 1)
             : textContent;
 
-          if (effect && settings.allowed_effects.includes(effect)) {
+          if (
+            effectWithoutPrefix &&
+            settings.allowed_effects.includes(effectWithoutPrefix)
+          ) {
             const span = document.createElement("span");
-            span.className = `emoji-fluff-wrapper ${effect}`;
+            span.className = `emoji-fluff-wrapper ${effectWithoutPrefix}`;
             img.parentNode.insertBefore(span, img);
             span.appendChild(img);
 
@@ -161,16 +172,16 @@ export default apiInitializer("1.8.0", (api) => {
 
     if (isEmpty(captures)) {
       if (selected.pre.match(/\S$/)) {
-        this.addText(selected, ` :${code}:${fluff}:`);
+        this.addText(selected, ` :${code}:${FLUFF_PREFIX}${fluff}:`);
       } else {
-        this.addText(selected, `:${code}:${fluff}:`);
+        this.addText(selected, `:${code}:${FLUFF_PREFIX}${fluff}:`);
       }
     } else {
       let numOfRemovedChars = captures[1].length;
       this._insertAt(
         selected.start - numOfRemovedChars,
         selected.end,
-        `${code}:${fluff}:`
+        `${code}:${FLUFF_PREFIX}${fluff}:`
       );
     }
   }
@@ -292,7 +303,7 @@ export default apiInitializer("1.8.0", (api) => {
                 this.emojiStore.track(v.code);
                 let code = `${v.code}:`;
                 if (v.fluff) {
-                  code += `${v.fluff}:`;
+                  code += `${FLUFF_PREFIX}${v.fluff}:`;
                 }
                 return code;
               } else {
