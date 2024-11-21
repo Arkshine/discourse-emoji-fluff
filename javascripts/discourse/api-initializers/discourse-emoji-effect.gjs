@@ -48,7 +48,7 @@ export default apiInitializer("1.8.0", (api) => {
             settings.allowed_effects.includes(effectWithoutPrefix)
           ) {
             const span = document.createElement("span");
-            span.className = `emoji-fluff-wrapper ${effectWithoutPrefix}`;
+            span.className = `emoji-fluff-wrapper fluff--${effectWithoutPrefix}`;
             img.parentNode.insertBefore(span, img);
             span.appendChild(img);
 

@@ -1,4 +1,4 @@
-@keyframes spin {
+@keyframes f-spin {
   from {
     transform: rotate(0deg);
   }
@@ -7,7 +7,7 @@
   }
 }
 
-@keyframes pulse {
+@keyframes f-pulse {
   from {
     transform: scale(1);
   }
@@ -16,7 +16,7 @@
   }
 }
 
-@keyframes bounce {
+@keyframes f-bounce {
   from {
     transform: translateY(0);
   }
@@ -25,7 +25,7 @@
   }
 }
 
-@keyframes wobble {
+@keyframes f-wobble {
   from {
     transform: rotate(45deg);
   }
@@ -34,52 +34,31 @@
   }
 }
 
-@keyframes rotateY {
-  0% {
-    transform: perspective(50em) rotateY(0deg);
-    filter: brightness(1);
+.fluff-- {
+  &flip {
+    transform: scaleX(-1);
   }
-  50% {
-    transform: perspective(50em) rotateY(90deg);
-    filter: brightness(0.5);
+
+  &flip-v {
+    transform: scaleY(-1);
   }
-  51% {
-    transform: perspective(50em) rotateY(91deg);
-    filter: brightness(1.15);
+
+  &spin {
+    animation: f-spin 2s linear infinite;
   }
-  100% {
-    transform: perspective(50em) rotateY(180deg);
-    filter: brightness(1);
+
+  &pulse {
+    animation: f-pulse 1s infinite alternate ease-in-out;
   }
-}
 
-.rotate-y {
-  animation: rotateY 2s infinite linear;
-  transform-origin: center;
-}
+  &bounce {
+    animation: f-bounce 0.4s infinite alternate-reverse
+      cubic-bezier(0, 0, 0.5, 1);
+  }
 
-.flip {
-  transform: scaleX(-1);
-}
-
-.flip-v {
-  transform: scaleY(-1);
-}
-
-.spin {
-  animation: spin 2s linear infinite;
-}
-
-.pulse {
-  animation: pulse 1s infinite alternate ease-in-out;
-}
-
-.bounce {
-  animation: bounce 0.4s infinite alternate-reverse cubic-bezier(0, 0, 0.5, 1);
-}
-
-.wobble {
-  animation: wobble 0.8s infinite alternate-reverse ease-in-out;
+  &wobble {
+    animation: f-wobble 0.8s infinite alternate-reverse ease-in-out;
+  }
 }
 
 .emoji-fluff-wrapper {
