@@ -197,11 +197,17 @@ export default apiInitializer("1.8.0", (api) => {
     (Superclass) =>
       class extends Superclass {
         @service fluffEmojiPicker;
+        @service fluffPresence;
         @service tooltip;
         @service site;
 
         @action
         onClose(event) {
+          if (!this.fluffPresence.isPresent) {
+            super.onClose(event);
+            return;
+          }
+
           if (
             !(
               this.fluffEmojiPicker.enabled &&
@@ -293,9 +299,14 @@ export default apiInitializer("1.8.0", (api) => {
       class extends Superclass {
         @service tooltip;
         @service fluffEmojiAutocomplete;
+        @service fluffPresence;
 
         _applyEmojiAutocomplete() {
           if (!this.siteSettings.enable_emoji) {
+            return;
+          }
+
+          if (!this.fluffPresence.isPresent) {
             return;
           }
 

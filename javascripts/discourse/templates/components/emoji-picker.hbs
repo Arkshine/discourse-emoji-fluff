@@ -54,7 +54,14 @@
       <div
         class="emoji-picker-emoji-area"
         role="button"
-        {{on "click" this.onEmojiSelectionWithFluff}}
+        {{on
+          "click"
+          (if
+            this.fluffPresence.isPresent
+            this.onEmojiSelectionWithFluff
+            this.onEmojiSelection
+          )
+        }}
         {{on "mouseover" this.onEmojiHover}}
       >
         <div class="results"></div>
@@ -137,10 +144,12 @@
           {{/each}}
         </div>
 
-        <FluffToggleSwitch
-          @icon="wand-magic-sparkles"
-          @title={{theme-i18n "fluff_selector.toggle_switch.toggle"}}
-        />
+        {{#if this.fluffPresence.isPresent}}
+          <FluffToggleSwitch
+            @icon="wand-magic-sparkles"
+            @title={{theme-i18n "fluff_selector.toggle_switch.toggle"}}
+          />
+        {{/if}}
       </div>
 
     </div>
