@@ -7,6 +7,7 @@ import { eq } from "truth-helpers";
 import DButton from "discourse/components/d-button";
 import concatClass from "discourse/helpers/concat-class";
 import replaceEmoji from "discourse/helpers/replace-emoji";
+import { FLUFF_EMOJI_PICKER_ID } from "../services/fluff-emoji-picker";
 
 export default class FluffSelector extends Component {
   @service tooltip;
@@ -62,7 +63,7 @@ export default class FluffSelector extends Component {
 
     if (li) {
       this.data.fluff = effect;
-      this.tooltip.close("fluff-selector-dropdown");
+      this.tooltip.close(FLUFF_EMOJI_PICKER_ID);
 
       li.dispatchEvent(new CustomEvent("click"));
     }

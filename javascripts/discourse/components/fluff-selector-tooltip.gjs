@@ -4,6 +4,7 @@ import { service } from "@ember/service";
 import DTooltip from "discourse/components/d-tooltip";
 import dIcon from "discourse-common/helpers/d-icon";
 import { bind } from "discourse-common/utils/decorators";
+import { FLUFF_EMOJI_PICKER_ID } from "../services/fluff-emoji-picker";
 import FluffSelector from "./fluff-selector";
 
 export default class FluffSelectorTooltip extends Component {
@@ -34,20 +35,20 @@ export default class FluffSelectorTooltip extends Component {
     super.willDestroy();
   }
 
+  get identifier() {
+    return FLUFF_EMOJI_PICKER_ID;
+  }
+
   @bind
   onParentItemClick(event) {
     event.stopImmediatePropagation();
     return false;
   }
 
-  get isEmojiPickerContext() {
-    return this.option?.context === "emoji-picker";
-  }
-
   <template>
     {{#if @option.code}}
       <DTooltip
-        @identifier="fluff-selector-dropdown"
+        @identifier={{this.identifier}}
         @placement="right"
         @interactive={{true}}
         @animated={{false}}
