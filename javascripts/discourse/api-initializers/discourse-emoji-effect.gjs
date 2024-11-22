@@ -266,6 +266,21 @@ export default apiInitializer("1.8.0", (api) => {
       }
   );
 
+  function clickOutsideIntercept(event) {
+    const target = event.target;
+
+    if (
+      target?.parentElement?.parentElement?.dataset?.identifier ===
+      FLUFF_EMOJI_PICKER_ID
+    ) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      return false;
+    }
+  }
+
+  window.addEventListener("click", clickOutsideIntercept);
+
   api.modifyClass(
     "component:d-editor",
     (Superclass) =>
