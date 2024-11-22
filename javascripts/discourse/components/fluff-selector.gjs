@@ -82,9 +82,15 @@ export default class FluffSelector extends Component {
         {{on "mouseout" (fn this.onMouseOut effect)}}
       >
         {{#if @data.src}}
-          <img src={{@data.src}} class={{concatClass "emoji" effect}} />
+          <img
+            src={{@data.src}}
+            class={{concatClass "emoji" (concat "fluff--" effect)}}
+          />
         {{else}}
-          {{replaceEmoji (concat ":" @data.code ":") (hash class=effect)}}
+          {{replaceEmoji
+            (concat ":" @data.code ":")
+            (hash class=(concat "fluff--" effect))
+          }}
         {{/if}}
       </DButton>
     {{/each}}
