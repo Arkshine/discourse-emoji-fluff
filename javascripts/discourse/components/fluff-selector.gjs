@@ -3,7 +3,6 @@ import { concat, fn, hash } from "@ember/helper";
 import { on } from "@ember/modifier";
 import { action } from "@ember/object";
 import { service } from "@ember/service";
-import { eq } from "truth-helpers";
 import DButton from "discourse/components/d-button";
 import concatClass from "discourse/helpers/concat-class";
 import replaceEmoji from "discourse/helpers/replace-emoji";
@@ -20,6 +19,12 @@ export default class FluffSelector extends Component {
 
   get isEmojiPickerContext() {
     return this.data?.context === "emoji-picker";
+  }
+
+  get itemElement() {
+    return document.querySelector(
+      `.autocomplete.with-fluff [data-code=${this.data.code}]`
+    );
   }
 
   @action
@@ -57,15 +62,13 @@ export default class FluffSelector extends Component {
       return;
     }
 
-    const li = document.querySelector(
-      `.autocomplete.with-fluff [data-code=${this.data.code}]`
-    );
+    const element = this.itemElement;
 
-    if (li) {
+    if (element) {
       this.data.fluff = effect;
       this.tooltip.close(FLUFF_EMOJI_PICKER_ID);
 
-      li.dispatchEvent(new CustomEvent("click"));
+      element.dispatchEvent(new CustomEvent("click"));
     }
   }
 
@@ -74,10 +77,7 @@ export default class FluffSelector extends Component {
       <DButton
         @translatedTitle={{effect}}
         @action={{fn this.selectFluff effect}}
-        class={{concatClass
-          "btn-transparent btn-fluff"
-          (if (eq this.fluffSelection.selectedFluff effect) "-selected")
-        }}
+        class={{concatClass "btn-transparent btn-fluff"}}
         {{on "mouseover" (fn this.onMouseHover effect)}}
         {{on "mouseout" (fn this.onMouseOut effect)}}
       >
