@@ -270,14 +270,61 @@ export default apiInitializer("1.8.0", (api) => {
     "component:d-editor",
     (Superclass) =>
       class extends Superclass {
+        @service tooltip;
+        @service fluffEmojiAutocomplete;
+
         _applyEmojiAutocomplete() {
           if (!this.siteSettings.enable_emoji) {
             return;
           }
 
+          function onItemMouseover(li, event) {
+            // Close the tooltip if the last item is "more...".
+            if (!li.dataset.code) {
+              this.tooltip.close(FLUFF_EMOJI_PICKER_ID);
+              this.fluffEmojiAutocomplete.opened = false;
+              return;
+            }
+
+            if (
+              // Selector is not opened first.
+              !this.fluffEmojiAutocomplete.opened ||
+              // Ignore the button.
+              event.target.classList.contains("btn-fluff-selector") ||
+              // Selector is already opened on this item.
+              li.querySelector(".btn-fluff-selector.-expanded")
+            ) {
+              return;
+            }
+
+            const target = li.querySelector(".btn-fluff-selector");
+
+            // Shows the tooltip on this item.
+            target?.dispatchEvent(
+              new MouseEvent("mousemove", {
+                bubbles: true,
+                cancelable: true,
+              })
+            );
+          }
+
           this.textManipulation.autocomplete({
             template: findRawTemplate("fluff-selector-autocomplete"),
             key: ":",
+
+            onRender: () => {
+              if (!this.site.mobileView) {
+                document
+                  .querySelectorAll(".autocomplete.with-fluff li")
+                  .forEach((li) => {
+                    li.addEventListener(
+                      "mouseover",
+                      onItemMouseover.bind(this, li)
+                    );
+                  });
+              }
+            },
+
             afterComplete: (text) => {
               this.set("value", text);
               schedule(
@@ -285,6 +332,17 @@ export default apiInitializer("1.8.0", (api) => {
                 this.textManipulation,
                 this.textManipulation.blurAndFocus
               );
+
+              if (!this.site.mobileView) {
+                document
+                  .querySelectorAll(".autocomplete.with-fluff li")
+                  .forEach((li) => {
+                    li.removeEventListener(
+                      "mouseover",
+                      onItemMouseover.bind(this, li)
+                    );
+                  });
+              }
             },
 
             onKeyUp: (text, cp) => {
