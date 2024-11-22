@@ -21,6 +21,12 @@ export default apiInitializer("1.8.0", (api) => {
     return;
   }
 
+  const siteSettings = api.container.lookup("service:site-settings");
+
+  if (!siteSettings.enable_emoji) {
+    return;
+  }
+
   api.decorateCookedElement(
     (element /*, helper*/) => {
       const images = element.querySelectorAll("img.emoji");
