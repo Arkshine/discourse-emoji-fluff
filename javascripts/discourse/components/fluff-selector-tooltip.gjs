@@ -1,6 +1,7 @@
 import Component from "@ember/component";
 import { schedule } from "@ember/runloop";
 import { service } from "@ember/service";
+import { modifier } from "ember-modifier";
 import DTooltip from "discourse/components/d-tooltip";
 import dIcon from "discourse-common/helpers/d-icon";
 import { bind } from "discourse-common/utils/decorators";
@@ -11,29 +12,22 @@ export default class FluffSelectorTooltip extends Component {
   @service fluffSelection;
   @service site;
 
-  init() {
-    super.init();
-
+  eventsListeners = modifier((element) => {
     // This is a hack to prevent the parent item from being
-    // clicked when the fluff selector is clicked.
+    // clicked when the fluff button selector is clicked.
     schedule("afterRender", () => {
-      this.element?.parentElement.addEventListener(
+      element?.parentElement.addEventListener("click", this.onParentItemClick, {
+        passive: true,
+      });
+    });
+
+    return () =>
+      element?.parentElement.removeEventListener(
         "click",
         this.onParentItemClick,
         { passive: true }
       );
-    });
-  }
-
-  willDestroy() {
-    this.element?.parentElement.removeEventListener(
-      "click",
-      this.onParentItemClick,
-      { passive: true }
-    );
-
-    super.willDestroy();
-  }
+  });
 
   get identifier() {
     return FLUFF_EMOJI_PICKER_ID;
@@ -53,6 +47,7 @@ export default class FluffSelectorTooltip extends Component {
         @interactive={{true}}
         @animated={{false}}
         class="btn btn-flat btn-fluff-selector"
+        {{this.eventsListeners}}
       >
         <:trigger>
           {{dIcon "wand-magic-sparkles"}}
