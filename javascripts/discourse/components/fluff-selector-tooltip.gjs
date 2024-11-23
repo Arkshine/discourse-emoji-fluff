@@ -76,7 +76,7 @@ export default class FluffSelectorTooltip extends Component {
         @onClose={{this.onClose}}
         @triggers={{this.triggers}}
         @untriggers={{this.untriggers}}
-        class="btn btn-flat btn-fluff-selector"
+        class="btn btn-transparent btn-fluff-selector"
         {{this.eventsListeners}}
       >
         <:trigger>

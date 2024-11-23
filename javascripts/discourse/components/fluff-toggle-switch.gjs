@@ -25,7 +25,7 @@ export default class FluffToggleSwitch extends Component {
 
   <template>
     <DButton
-      @class={{concatClass @class "btn-flat fluff-toggle-switch"}}
+      @class={{concatClass @class "btn-transparent fluff-toggle-switch"}}
       @action={{this.toggle}}
       @translatedTitle={{@title}}
     >

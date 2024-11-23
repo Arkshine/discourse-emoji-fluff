@@ -77,7 +77,7 @@ export default class FluffSelector extends Component {
       <DButton
         @translatedTitle={{effect}}
         @action={{fn this.selectFluff effect}}
-        class={{concatClass "btn-flat btn-fluff"}}
+        class={{concatClass "btn-transparent btn-fluff"}}
         {{on "mouseover" (fn this.onMouseHover effect)}}
         {{on "mouseout" (fn this.onMouseOut effect)}}
       >

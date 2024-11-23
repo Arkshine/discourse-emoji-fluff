@@ -165,13 +165,13 @@
     transition: all 0.3s;
     cursor: pointer;
 
-    &:hover {
-      background: var(--d-hover);
+    &.--checked.d-icon {
+      background: var(--tertiary-high);
+      color: var(--secondary);
     }
 
-    &.--checked {
-      color: var(--secondary);
-      background: var(--tertiary-high);
+    &:hover {
+      background: var(--d-hover);
     }
   }
 }
