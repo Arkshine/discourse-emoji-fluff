@@ -1,3 +1,4 @@
+import { schedule } from "@ember/runloop";
 import { FLUFF_PREFIX } from "./constants";
 
 export function renderFluff(element) {
@@ -16,63 +17,71 @@ export function renderFluff(element) {
         return;
       }
 
-      const effects = effectText
+      const [mainEffect, ...additionalEffects] = effectText
         .replace(FLUFF_PREFIX, "")
         .split(",")
         .map((effect) => effect.trim());
 
       const allowedAdditionalEffects = ["flip", "flip_v"];
 
-      const mainEffect = effects.shift();
       const isMainEffectAllowed = settings.allowed_effects.includes(mainEffect);
-      const additionalEffect = effects.find((effect) =>
-        allowedAdditionalEffects.includes(effect)
-      );
+      const filteredAdditionalEffects = [
+        ...new Set(
+          additionalEffects.filter((effect) =>
+            allowedAdditionalEffects.includes(effect)
+          )
+        ),
+      ];
 
       if (isMainEffectAllowed) {
         const span = document.createElement("span");
 
-        const allEffects = [mainEffect];
-        if (additionalEffect) {
-          allEffects.push(additionalEffect);
-        }
+        const allEffects = [mainEffect, ...filteredAdditionalEffects];
         span.className = `fluff ${allEffects
           .map((e) => `fluff--${e}`)
           .join(" ")}`;
         img.parentNode.insertBefore(span, img);
         span.appendChild(img);
 
-        if (additionalEffect === "flip" || additionalEffect === "flip_v") {
-          const transform = getComputedStyle(img).getPropertyValue("transform");
+        schedule("afterRender", () => {
+          const hasFlip = allEffects.some((e) => e === "flip");
+          const hasFlipV = allEffects.some((e) => e === "flip_v");
 
-          if (transform !== "none") {
-            let [a, b, c, d, tx, ty] = transform
-              .replace("matrix(", "")
-              .replace(")", "")
-              .split(",")
-              .map(parseFloat);
+          if (hasFlip || hasFlipV) {
+            const transform =
+              getComputedStyle(img).getPropertyValue("transform");
 
-            if (additionalEffect === "flip") {
-              a = -a;
-              b = -b;
-            } else if (additionalEffect === "flip_v") {
-              d = -d;
-              c = -c;
-            }
+            if (transform !== "none") {
+              let [a, b, c, d, tx, ty] = transform
+                .replace("matrix(", "")
+                .replace(")", "")
+                .split(",")
+                .map(parseFloat);
 
-            if (mainEffect === "slide") {
-              tx = 0;
-            }
+              if (hasFlip) {
+                a = -a;
+                b = -b;
+              }
 
-            if (
-              a !== transform[0] ||
-              d !== transform[3] ||
-              tx !== transform[4]
-            ) {
-              span.style.transform = `matrix(${a}, ${b}, ${c}, ${d}, ${tx}, ${ty})`;
+              if (hasFlipV) {
+                d = -d;
+                c = -c;
+              }
+
+              if (mainEffect === "slide") {
+                tx = 0;
+              }
+
+              if (
+                a !== transform[0] ||
+                d !== transform[3] ||
+                tx !== transform[4]
+              ) {
+                span.style.transform = `matrix(${a}, ${b}, ${c}, ${d}, ${tx}, ${ty})`;
+              }
             }
           }
-        }
+        });
 
         const restOfText = textContent.slice(effectText.length + 1);
         if (restOfText) {
