@@ -4,7 +4,6 @@
   .fk-d-tooltip__inner-content > div {
     display: grid;
     grid-template-columns: repeat(var(--fluff-selector-columns, 3), 1fr);
-    gap: 0.3em 0;
 
     .btn-fluff {
       user-select: none;
