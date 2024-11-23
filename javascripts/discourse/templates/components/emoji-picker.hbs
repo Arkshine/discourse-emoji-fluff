@@ -54,14 +54,7 @@
       <div
         class="emoji-picker-emoji-area"
         role="button"
-        {{on
-          "click"
-          (if
-            this.fluffPresence.isPresent
-            this.onEmojiSelectionWithFluff
-            this.onEmojiSelection
-          )
-        }}
+        {{on "click" this.onEmojiSelection}}
         {{on "mouseover" this.onEmojiHover}}
       >
         <div class="results"></div>

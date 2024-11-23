@@ -222,14 +222,14 @@ export default apiInitializer("1.8.0", (api) => {
         }
 
         @action
-        onEmojiSelectionWithFluff(event) {
+        onEmojiSelection(event) {
           if (
+            !this.fluffPresence.isPresent ||
             !this.fluffEmojiPicker.enabled ||
             (this.fluffEmojiPicker.selectedEmoji &&
               !this.fluffEmojiPicker.selectedFluff)
           ) {
-            this.onEmojiSelection(event);
-            return;
+            return super.onEmojiSelection(event);
           }
 
           const img = event.target;
