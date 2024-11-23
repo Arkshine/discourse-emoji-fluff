@@ -85,40 +85,58 @@
 
 .fluff-- {
   &flip {
-    transform: scaleX(-1);
+    img {
+      transform: scaleX(-1);
+    }
   }
 
   &flip_v {
-    transform: scaleY(-1);
+    img {
+      transform: scaleY(-1);
+    }
   }
 
   &spin {
-    animation: f-spin 2s linear infinite;
+    img {
+      animation: f-spin 2s linear infinite;
+    }
   }
 
   &pulse {
-    animation: f-pulse 1s infinite alternate ease-in-out;
+    img {
+      animation: f-pulse 1s infinite alternate ease-in-out;
+    }
   }
 
   &bounce {
-    animation: f-bounce 0.4s infinite alternate-reverse
-      cubic-bezier(0, 0, 0.5, 1);
+    img {
+      animation: f-bounce 0.4s infinite alternate-reverse
+        cubic-bezier(0, 0, 0.5, 1);
+    }
   }
 
   &wobble {
-    animation: f-wobble 0.8s infinite alternate-reverse ease-in-out;
+    img {
+      animation: f-wobble 0.8s infinite alternate-reverse ease-in-out;
+    }
   }
 
   &fade {
-    animation: f-fade 3s infinite alternate;
+    img {
+      animation: f-fade 3s infinite alternate;
+    }
   }
 
   &invert {
-    filter: invert(1);
+    img {
+      filter: invert(1);
+    }
   }
 
   &hue {
-    animation: f-hue 3s infinite;
+    img {
+      animation: f-hue 3s infinite;
+    }
   }
 
   &slide {
@@ -129,6 +147,8 @@
   }
 
   &greyscale {
-    filter: grayscale(100%);
+    img {
+      filter: grayscale(100%);
+    }
   }
 }

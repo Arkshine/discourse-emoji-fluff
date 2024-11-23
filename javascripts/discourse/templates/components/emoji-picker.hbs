@@ -124,6 +124,7 @@
           {{#if this.fluffEmojiPicker.selectedEmoji}}
             {{replace-emoji
               (concat ":" this.fluffEmojiPicker.selectedEmoji ":")
+              title=this.fluffEmojiPicker.hoveredFluff
             }}
           {{else if this.hoveredEmoji}}
             {{replace-emoji (concat ":" this.hoveredEmoji ":")}}
