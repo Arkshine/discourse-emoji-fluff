@@ -5,7 +5,16 @@ en:
       enabled: |
         Enable or disable the functionnalities of the component but keeping the rendering active.
       allowed_effects: |
-        List of allowed effects. <br> Choices: <code>flip</code>, <code>flip_v</code>, <code>spin</code>, <code>pulse</code>, <code>bounce</code>, <code>wobble</code>
+        List of allowed effects. <br> 
+        <details>
+          <summary>Available Choices:</summary>
+          <span><span class="fluff fluff--flip">🎉</span><code>flip</code></span>
+          <span><span class="fluff fluff--flip_v">🎉</span><code>flip_v</code></span>
+          <span><span class="fluff fluff--spin">🎉</span><code>spin</code></span>
+          <span><span class="fluff fluff--pulse">🎉</span><code>pulse</code></span>
+          <span><span class="fluff fluff--bounce">🎉</span><code>bounce</code></span>
+          <span><span class="fluff fluff--wobble">🎉</span><code>wobble</code></span>
+        </details>
 
   fluff_selector:
     toggle_switch:
