@@ -307,6 +307,7 @@ export default apiInitializer("1.8.0", (api) => {
           }
 
           if (!this.fluffPresence.isPresent) {
+            super._applyEmojiAutocomplete();
             return;
           }
 
