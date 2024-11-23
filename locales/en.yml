@@ -2,7 +2,10 @@ en:
   theme_metadata:
     description: ""
     settings:
-      example_setting: A description of a setting.
+      enabled: |
+        Enable or disable the functionnalities of the component but keeping the rendering active.
+      allowed_effects: |
+        List of allowed effects. <br> Choices: <code>flip</code>, <code>flip_v</code>, <code>spin</code>, <code>pulse</code>, <code>bounce</code>, <code>wobble</code>
 
   fluff_selector:
     toggle_switch:
