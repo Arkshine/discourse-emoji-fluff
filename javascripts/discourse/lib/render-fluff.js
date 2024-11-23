@@ -26,7 +26,7 @@ export function renderFluff(element) {
         settings.allowed_effects.includes(effectWithoutPrefix)
       ) {
         const span = document.createElement("span");
-        span.className = `emoji-fluff-wrapper fluff--${effectWithoutPrefix}`;
+        span.className = `fluff fluff--${effectWithoutPrefix}`;
         img.parentNode.insertBefore(span, img);
         span.appendChild(img);
 
@@ -51,8 +51,7 @@ export function applyEmojiOnlyClass(element) {
     children.forEach((node, index) => {
       if (node.nodeType === Node.ELEMENT_NODE) {
         const isWrapperEmoji =
-          node.matches("span.emoji-fluff-wrapper") &&
-          node.querySelector("img.emoji");
+          node.matches("span.fluff") && node.querySelector("img.emoji");
         const isDirectEmoji = node.matches("img.emoji");
 
         if (isWrapperEmoji || isDirectEmoji) {
@@ -86,7 +85,7 @@ export function applyEmojiOnlyClass(element) {
 
         if (spaceCount >= emojiGroup.length - 1) {
           const hasWrapperEmoji = emojiGroup.some((e) =>
-            e.matches("span.emoji-fluff-wrapper")
+            e.matches("span.fluff")
           );
           const allDirectEmoji = emojiGroup.every((e) =>
             e.matches("img.emoji")
@@ -96,7 +95,7 @@ export function applyEmojiOnlyClass(element) {
             emojiGroup.forEach((emoji) => {
               emoji.classList.add("only-emoji");
 
-              if (emoji.matches("span.emoji-fluff-wrapper")) {
+              if (emoji.matches("span.fluff")) {
                 emoji.querySelector("img.emoji")?.classList.add("only-emoji");
               }
             });
