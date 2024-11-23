@@ -61,10 +61,26 @@
   }
 }
 
-.emoji-fluff-wrapper,
+.fluff-container {
+  &:hover {
+    background: var(--tertiary-low) !important;
+    border-radius: 3px;
+  }
+}
+
 .fluff {
   display: inline-flex;
   vertical-align: text-bottom;
+
+  .fluff-container & {
+    vertical-align: middle;
+  }
+
+  user-select: none;
+
+  &:focus:focus-visible {
+    background: transparent;
+  }
 }
 
 .fluff-- {

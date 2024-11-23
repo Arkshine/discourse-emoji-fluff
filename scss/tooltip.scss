@@ -4,23 +4,13 @@
   .fk-d-tooltip__inner-content > div {
     display: grid;
     grid-template-columns: repeat(var(--fluff-selector-columns, 3), 1fr);
+    gap: 0.3em 0;
 
     .btn-fluff {
       user-select: none;
 
-      @include hover {
-        background: none !important;
-        border-color: rgba(0, 0, 0, 0) !important;
-        transform: scale(1.2);
-      }
-
       &:focus:focus-visible {
         background: transparent;
-      }
-
-      &.-selected {
-        outline: 2px solid var(--d-selected);
-        outline-offset: -3px;
       }
     }
   }
