@@ -10,26 +10,71 @@ export function renderFluff(element) {
       const textContent = nextSibling.nodeValue;
 
       const result = /^(?<effect>[^:]+):/.exec(textContent);
-      const effect = result?.groups?.effect;
+      const effectText = result?.groups?.effect;
 
-      if (!effect || !effect.startsWith(FLUFF_PREFIX)) {
+      if (!effectText || !effectText.startsWith(FLUFF_PREFIX)) {
         return;
       }
 
-      const effectWithoutPrefix = effect.replace(FLUFF_PREFIX, "");
-      const restOfText = effect
-        ? textContent.slice(effect.length + 1)
-        : textContent;
+      const effects = effectText
+        .replace(FLUFF_PREFIX, "")
+        .split(",")
+        .map((effect) => effect.trim());
 
-      if (
-        effectWithoutPrefix &&
-        settings.allowed_effects.includes(effectWithoutPrefix)
-      ) {
+      const allowedAdditionalEffects = ["flip", "flip_v"];
+
+      const mainEffect = effects.shift();
+      const isMainEffectAllowed = settings.allowed_effects.includes(mainEffect);
+      const additionalEffect = effects.find((effect) =>
+        allowedAdditionalEffects.includes(effect)
+      );
+
+      if (isMainEffectAllowed) {
         const span = document.createElement("span");
-        span.className = `fluff fluff--${effectWithoutPrefix}`;
+
+        const allEffects = [mainEffect];
+        if (additionalEffect) {
+          allEffects.push(additionalEffect);
+        }
+        span.className = `fluff ${allEffects
+          .map((e) => `fluff--${e}`)
+          .join(" ")}`;
         img.parentNode.insertBefore(span, img);
         span.appendChild(img);
 
+        if (additionalEffect === "flip" || additionalEffect === "flip_v") {
+          const transform = getComputedStyle(img).getPropertyValue("transform");
+
+          if (transform !== "none") {
+            let [a, b, c, d, tx, ty] = transform
+              .replace("matrix(", "")
+              .replace(")", "")
+              .split(",")
+              .map(parseFloat);
+
+            if (additionalEffect === "flip") {
+              a = -a;
+              b = -b;
+            } else if (additionalEffect === "flip_v") {
+              d = -d;
+              c = -c;
+            }
+
+            if (mainEffect === "slide") {
+              tx = 0;
+            }
+
+            if (
+              a !== transform[0] ||
+              d !== transform[3] ||
+              tx !== transform[4]
+            ) {
+              span.style.transform = `matrix(${a}, ${b}, ${c}, ${d}, ${tx}, ${ty})`;
+            }
+          }
+        }
+
+        const restOfText = textContent.slice(effectText.length + 1);
         if (restOfText) {
           nextSibling.nodeValue = restOfText;
         } else {
