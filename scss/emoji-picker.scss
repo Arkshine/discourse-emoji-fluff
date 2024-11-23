@@ -1,0 +1,33 @@
+.emoji-picker-diversity-picker {
+  margin-left: auto;
+}
+
+.fluff-toggle-switch {
+  padding: 0;
+
+  .emoji-picker-footer & {
+    margin-right: 0.5em;
+    margin-left: 1em;
+  }
+
+  &__icon {
+    position: relative;
+
+    color: var(--primary-high);
+    border: 1px solid rgba(0, 0, 0, 0);
+    padding: 0.25em;
+    border-radius: 3px;
+    vertical-align: middle;
+    transition: all 0.3s;
+    cursor: pointer;
+
+    &.--checked.d-icon {
+      background: var(--tertiary-high);
+      color: var(--secondary);
+    }
+
+    &:hover {
+      background: var(--d-hover);
+    }
+  }
+}

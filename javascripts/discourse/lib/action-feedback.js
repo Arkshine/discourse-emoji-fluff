@@ -1,7 +1,7 @@
 import { SVG_NAMESPACE } from "discourse-common/lib/icon-library";
 import I18n from "discourse-i18n";
 
-// Original code from Discourse, adjusted to be more generic.
+// Original code from Discourse, simplified and adjusted to be more generic.
 
 /**
  * Shows a success message and optionally a checkmark icon next to the button.

@@ -1,0 +1,49 @@
+.autocomplete.with-fluff {
+  .fluff-selector-wrapper {
+    &:first-of-type a {
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
+    }
+
+    &:last-of-type a {
+      border-bottom-left-radius: 8px;
+      border-bottom-right-radius: 8px;
+    }
+
+    .fluff {
+      @include hover {
+        background-color: var(--d-hover);
+        text-decoration: none;
+      }
+    }
+  }
+
+  ul {
+    li {
+      display: flex;
+
+      a {
+        flex: 1;
+      }
+
+      a.selected:not(:hover) ~ div {
+        background-color: var(--d-selected);
+      }
+
+      @include hover {
+        background-color: var(--d-hover);
+        text-decoration: none;
+      }
+
+      &:first-of-type a {
+        border-top-left-radius: 0px;
+        border-top-right-radius: 0px;
+      }
+
+      &:last-of-type a {
+        border-bottom-left-radius: 0px;
+        border-bottom-right-radius: 0px;
+      }
+    }
+  }
+}

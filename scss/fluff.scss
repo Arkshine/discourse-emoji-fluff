@@ -1,0 +1,68 @@
+@keyframes f-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes f-pulse {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.2);
+  }
+}
+
+@keyframes f-bounce {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-7px);
+  }
+}
+
+@keyframes f-wobble {
+  from {
+    transform: rotate(45deg);
+  }
+  to {
+    transform: rotate(-45deg);
+  }
+}
+
+.emoji-fluff-wrapper,
+.fluff {
+  display: inline-flex;
+  vertical-align: text-bottom;
+}
+
+.fluff-- {
+  &flip {
+    transform: scaleX(-1);
+  }
+
+  &flip_v {
+    transform: scaleY(-1);
+  }
+
+  &spin {
+    animation: f-spin 2s linear infinite;
+  }
+
+  &pulse {
+    animation: f-pulse 1s infinite alternate ease-in-out;
+  }
+
+  &bounce {
+    animation: f-bounce 0.4s infinite alternate-reverse
+      cubic-bezier(0, 0, 0.5, 1);
+  }
+
+  &wobble {
+    animation: f-wobble 0.8s infinite alternate-reverse ease-in-out;
+  }
+}

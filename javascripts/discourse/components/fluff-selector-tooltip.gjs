@@ -6,7 +6,7 @@ import { modifier } from "ember-modifier";
 import DTooltip from "discourse/components/d-tooltip";
 import dIcon from "discourse-common/helpers/d-icon";
 import { bind } from "discourse-common/utils/decorators";
-import { FLUFF_EMOJI_PICKER_ID } from "../services/fluff-emoji-picker";
+import { FLUFF_EMOJI_PICKER_ID } from "../lib/constants";
 import FluffSelector from "./fluff-selector";
 
 export default class FluffSelectorTooltip extends Component {

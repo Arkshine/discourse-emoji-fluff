@@ -6,7 +6,7 @@ import { service } from "@ember/service";
 import DButton from "discourse/components/d-button";
 import concatClass from "discourse/helpers/concat-class";
 import replaceEmoji from "discourse/helpers/replace-emoji";
-import { FLUFF_EMOJI_PICKER_ID } from "../services/fluff-emoji-picker";
+import { FLUFF_EMOJI_PICKER_ID } from "../lib/constants";
 
 export default class FluffSelector extends Component {
   @service tooltip;
