@@ -1,5 +1,5 @@
 allowed_effects:
-  default: "flip|flip-v|spin|pulse|bounce|wobble"
+  default: "flip|flip_v|spin|pulse|bounce|wobble"
   type: "list"
   description: "List of allowed effects"
-  choices: ["flip", "flip-v", "spin", "pulse", "bounce", "wobble"]
+  choices: ["flip", "flip_v", "spin", "pulse", "bounce", "wobble"]
