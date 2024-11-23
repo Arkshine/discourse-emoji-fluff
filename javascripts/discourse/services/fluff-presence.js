@@ -8,7 +8,7 @@ export default class FluffPresence extends Service {
   init() {
     super.init(...arguments);
 
-    if (this.router.currentRouteName.startsWith("topic.")) {
+    if (settings.enabled && this.router.currentRouteName.startsWith("topic.")) {
       this.setTo(true);
     }
   }

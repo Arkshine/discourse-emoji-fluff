@@ -1,3 +1,8 @@
+enabled:
+  default: true
+  type: "bool"
+  description: "Enable or disable the functionnalities of the component but keeping the rendering active."
+
 allowed_effects:
   default: "flip|flip_v|spin|pulse|bounce|wobble"
   type: "list"
