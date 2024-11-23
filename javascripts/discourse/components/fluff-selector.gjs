@@ -23,7 +23,7 @@ export default class FluffSelector extends Component {
 
   get itemElement() {
     return document.querySelector(
-      `.autocomplete.with-fluff [data-code=${this.data.code}]`
+      `.autocomplete.with-fluff [data-code="${this.data.code}"]`
     );
   }
 

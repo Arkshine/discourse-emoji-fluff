@@ -37,7 +37,7 @@ export default class FluffSelectorTooltip extends Component {
 
   get itemElement() {
     return document.querySelector(
-      `.autocomplete.with-fluff [data-code=${this.option.code}]`
+      `.autocomplete.with-fluff [data-code="${this.option.code}"]`
     );
   }
 
