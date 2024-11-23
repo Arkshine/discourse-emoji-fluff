@@ -44,7 +44,6 @@ export default class FluffSelector extends Component {
 
   @action
   onMouseOut() {
-    this.fluffEmojiPicker.hoveredTarget = null;
     this.fluffEmojiPicker.hoveredFluff = "";
     this.fluffEmojiPicker.selectedFluff = "";
   }

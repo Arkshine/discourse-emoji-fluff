@@ -58,7 +58,17 @@ export function handleEmojiPicker(Superclass) {
         (this.fluffEmojiPicker.selectedEmoji &&
           !this.fluffEmojiPicker.selectedFluff)
       ) {
-        return super.onEmojiSelection(event);
+        if (
+          // If we select too fastly an emoji, the tooltip close event is not called.
+          // So, if the target is not the same, we reset.
+          this.fluffEmojiPicker.selectedTarget &&
+          !this.fluffEmojiPicker.selectedTarget.isSameNode(event.target)
+        ) {
+          this.fluffEmojiPicker.selectedEmoji = "";
+          this.fluffEmojiPicker.selectedTarget = null;
+        } else {
+          return super.onEmojiSelection(event);
+        }
       }
 
       const img = event.target;
