@@ -115,11 +115,15 @@
       </div>
 
       <div class="emoji-picker-footer">
-        <div class="emoji-picker-emoji-info">
+        <div
+          class={{concatClass
+            "emoji-picker-emoji-info"
+            (concat "fluff--" this.fluffEmojiPicker.hoveredFluff)
+          }}
+        >
           {{#if this.fluffEmojiPicker.selectedEmoji}}
             {{replace-emoji
               (concat ":" this.fluffEmojiPicker.selectedEmoji ":")
-              class=this.fluffEmojiPicker.hoveredFluff
             }}
           {{else if this.hoveredEmoji}}
             {{replace-emoji (concat ":" this.hoveredEmoji ":")}}

@@ -77,20 +77,17 @@ export default class FluffSelector extends Component {
       <DButton
         @translatedTitle={{effect}}
         @action={{fn this.selectFluff effect}}
-        class={{concatClass "btn-transparent btn-fluff"}}
+        class={{concatClass
+          "btn-transparent btn-fluff"
+          (concat "fluff--" effect)
+        }}
         {{on "mouseover" (fn this.onMouseHover effect)}}
         {{on "mouseout" (fn this.onMouseOut effect)}}
       >
         {{#if @data.src}}
-          <img
-            src={{@data.src}}
-            class={{concatClass "emoji" (concat "fluff--" effect)}}
-          />
+          <img src={{@data.src}} class={{concatClass "emoji"}} />
         {{else}}
-          {{replaceEmoji
-            (concat ":" @data.code ":")
-            (hash class=(concat "fluff--" effect))
-          }}
+          {{replaceEmoji (concat ":" @data.code ":")}}
         {{/if}}
       </DButton>
     {{/each}}
