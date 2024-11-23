@@ -116,14 +116,6 @@
   }
 }
 
-.btn-fluff-selector .fluff-selected {
-  position: absolute;
-  font-size: var(--font-down-6);
-  color: var(--tertiary-med-or-tertiary);
-  bottom: 3em;
-  right: 1em;
-}
-
 [data-identifier="fluff-selector-dropdown"] {
   max-width: 100% !important;
 
@@ -136,6 +128,10 @@
         background: none !important;
         border-color: rgba(0, 0, 0, 0) !important;
         transform: scale(1.2);
+      }
+
+      &:focus:focus-visible {
+        background: transparent;
       }
 
       &.-selected {
