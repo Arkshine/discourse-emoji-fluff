@@ -118,7 +118,10 @@
         <div
           class={{concatClass
             "emoji-picker-emoji-info"
-            (concat "fluff--" this.fluffEmojiPicker.hoveredFluff)
+            (concat
+              (if this.fluffEmojiPicker.hoveredFluff "fluff--" "")
+              this.fluffEmojiPicker.hoveredFluff
+            )
           }}
         >
           {{#if this.fluffEmojiPicker.selectedEmoji}}
