@@ -111,8 +111,7 @@
 
   &bounce {
     img {
-      animation: f-bounce 0.4s infinite alternate
-        cubic-bezier(0, 0, 0.5, 1);
+      animation: f-bounce 0.4s infinite alternate cubic-bezier(0, 0, 0.5, 1);
     }
   }
 
