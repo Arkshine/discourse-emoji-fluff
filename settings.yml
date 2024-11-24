@@ -3,5 +3,5 @@ enabled:
   type: "bool"
 
 allowed_effects:
-  default: "flip|flip_v|spin|pulse|bounce|wobble|fade|invert|hue|slide|greyscale"
+  default: "flip|flip_v|spin|pulse|bounce|wobble|float|rotate3d|slide|fade|invert|hue|greyscale"
   type: "list"
