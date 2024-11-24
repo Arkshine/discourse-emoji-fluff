@@ -41,10 +41,7 @@ function onItemMouseover(li, event) {
 function clickOutsideIntercept(event) {
   const target = event.target;
 
-  if (
-    target?.classList.contains("fk-d-tooltip__inner-content") &&
-    target?.closest(`[data-identifier="${FLUFF_EMOJI_PICKER_ID}"]`)
-  ) {
+  if (target?.closest(`[data-identifier="${FLUFF_EMOJI_PICKER_ID}"]`)) {
     // Prevents the autocomplete from closing when clicking inside the tooltip.
     event.preventDefault();
     event.stopImmediatePropagation();
