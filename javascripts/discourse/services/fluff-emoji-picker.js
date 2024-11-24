@@ -1,6 +1,5 @@
 import { tracked } from "@glimmer/tracking";
 import Service, { service } from "@ember/service";
-import { FLUFF_EMOJI_PICKER_ID } from "../lib/constants";
 
 export default class FluffEmojiPicker extends Service {
   @service tooltip;
@@ -21,8 +20,6 @@ export default class FluffEmojiPicker extends Service {
   }
 
   clear() {
-    this.tooltip.close(FLUFF_EMOJI_PICKER_ID);
-
     this.enabled = false;
     this.selectedTarget = null;
     this.selectedEmoji = "";
