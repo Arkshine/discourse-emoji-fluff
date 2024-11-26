@@ -113,42 +113,49 @@
 
 .fluff-- {
   &flip {
+    &,
     img {
       transform: scaleX(-1);
     }
   }
 
   &flip_v {
+    &,
     img {
       transform: scaleY(-1);
     }
   }
 
   &spin {
+    &,
     img {
       animation: f-spin 2s linear infinite;
     }
   }
 
   &pulse {
+    &,
     img {
       animation: f-pulse 1s infinite alternate ease-in-out;
     }
   }
 
   &bounce {
+    &,
     img {
       animation: f-bounce 0.4s infinite alternate cubic-bezier(0, 0, 0.5, 1);
     }
   }
 
   &wobble {
+    &,
     img {
       animation: f-wobble 0.8s infinite alternate-reverse ease-in-out;
     }
   }
 
   &float {
+    &,
     img {
       animation: f-float 5s infinite linear;
     }
@@ -156,30 +163,35 @@
 
   &slide {
     overflow: hidden;
+    &,
     img {
       animation: f-slide 2s infinite linear;
     }
   }
 
   &fade {
+    &,
     img {
       animation: f-fade 2s infinite alternate ease-in;
     }
   }
 
   &invert {
+    &,
     img {
       filter: invert(1);
     }
   }
 
   &hue {
+    &,
     img {
       animation: f-hue 3s infinite;
     }
   }
 
   &greyscale {
+    &,
     img {
       filter: grayscale(100%);
     }

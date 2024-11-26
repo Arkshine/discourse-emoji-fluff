@@ -14,6 +14,12 @@ en:
           <span><span class="fluff fluff--pulse">🎉</span><code>pulse</code></span>
           <span><span class="fluff fluff--bounce">🎉</span><code>bounce</code></span>
           <span><span class="fluff fluff--wobble">🎉</span><code>wobble</code></span>
+          <span><span class="fluff fluff--float">🎉</span><code>float</code></span>
+          <span><span class="fluff fluff--slide">🎉</span><code>slide</code></span>
+          <span><span class="fluff fluff--fade">🎉</span><code>fade</code></span>
+          <span><span class="fluff fluff--invert">🎉</span><code>invert</code></span>
+          <span><span class="fluff fluff--hue">🎉</span><code>hue</code></span>
+          <span><span class="fluff fluff--greyscale">🎉</span><code>greyscale</code></span>
         </details>
 
       allow_selector_in: |
