@@ -114,49 +114,49 @@
 .fluff-- {
   &flip {
     img,
-    i {
+    details.settings & i {
       transform: scaleX(-1);
     }
   }
 
   &flip_v {
     img,
-    i {
+    details.settings & i {
       transform: scaleY(-1);
     }
   }
 
   &spin {
     img,
-    i {
+    details.settings & i {
       animation: f-spin 2s linear infinite;
     }
   }
 
   &pulse {
     img,
-    i {
+    details.settings & i {
       animation: f-pulse 1s infinite alternate ease-in-out;
     }
   }
 
   &bounce {
     img,
-    i {
+    details.settings & i {
       animation: f-bounce 0.4s infinite alternate cubic-bezier(0, 0, 0.5, 1);
     }
   }
 
   &wobble {
     img,
-    i {
+    details.settings & i {
       animation: f-wobble 0.8s infinite alternate-reverse ease-in-out;
     }
   }
 
   &float {
     img,
-    i {
+    details.settings & i {
       animation: f-float 5s infinite linear;
     }
   }
@@ -164,35 +164,35 @@
   &slide {
     overflow: hidden;
     img,
-    i {
+    details.settings & i {
       animation: f-slide 2s infinite linear;
     }
   }
 
   &fade {
     img,
-    i {
+    details.settings & i {
       animation: f-fade 2s infinite alternate ease-in;
     }
   }
 
   &invert {
     img,
-    i {
+    details.settings & i {
       filter: invert(1);
     }
   }
 
   &hue {
     img,
-    i {
+    details.settings & i {
       animation: f-hue 3s infinite;
     }
   }
 
   &greyscale {
     img,
-    i {
+    details.settings & i {
       filter: grayscale(100%);
     }
   }

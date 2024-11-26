@@ -6,7 +6,7 @@ en:
         Enable or disable the functionnalities of the component but keeping the rendering active.
       allowed_effects: |
         List of allowed effects. <br> 
-        <details>
+        <details class="settings">
           <summary>Available Choices:</summary>
           <span><span class="fluff fluff--flip"><i>🎉</i></span><code>flip</code></span>
           <span><span class="fluff fluff--flip_v"><i>🎉</i></span><code>flip_v</code></span>
