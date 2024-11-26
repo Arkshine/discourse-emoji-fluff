@@ -5,3 +5,8 @@ enabled:
 allowed_effects:
   default: "flip|flip_v|spin|pulse|bounce|wobble|float|slide|fade|invert|hue|greyscale"
   type: "list"
+
+allow_selector_in:
+  default: both
+  type: "enum"
+  choices: ["none", "both", "autocomplete", "emoji-picker"]

@@ -37,8 +37,23 @@ class EmojiFluffInit {
         { afterAdopt: true }
       );
 
-      api.modifyClass("component:emoji-picker", handleEmojiPicker);
-      api.modifyClass("component:d-editor", handleAutocomplete);
+      const allowSelectorInAutocomplete = ["autocomplete", "both"].includes(
+        settings.allow_selector_in
+      );
+      const allowSelectorInEmojiPicker = ["emoji-picker", "both"].includes(
+        settings.allow_selector_in
+      );
+
+      if (allowSelectorInAutocomplete || allowSelectorInEmojiPicker) {
+        if (allowSelectorInAutocomplete) {
+          api.modifyClass("component:d-editor", handleAutocomplete);
+          registerAutocompleteEvents();
+        }
+
+        if (allowSelectorInEmojiPicker) {
+          api.modifyClass("component:emoji-picker", handleEmojiPicker);
+        }
+      }
 
       document
         .querySelector(":root")
@@ -46,8 +61,6 @@ class EmojiFluffInit {
           "--fluff-selector-columns",
           closestSquareGrid(allowedEffects.split("|").length).columns
         );
-
-      registerAutocompleteEvents();
     });
   }
 
