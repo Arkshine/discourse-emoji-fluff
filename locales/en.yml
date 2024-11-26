@@ -23,7 +23,7 @@ en:
         </details>
 
       allow_selector_in: |
-        Where the fluffl selector should be available. <br><br>
+        Where the fluff selector should be available. <br><br>
         <code>none</code>: disable the selectors. <br>
         <code>both</code>: enable the selector in both the autocomplete and the emoji picker. <br>
         <code>autocomplete</code>: enable the selector only in the autocomplete. <br>
