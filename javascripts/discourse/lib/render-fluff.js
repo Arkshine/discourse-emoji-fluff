@@ -1,6 +1,24 @@
 import { schedule } from "@ember/runloop";
 import { FLUFF_PREFIX } from "./constants";
 
+export function removeFluff(element) {
+  const images = element.querySelectorAll("img.emoji");
+  images.forEach((img) => {
+    const nextSibling = img.nextSibling;
+
+    if (nextSibling && nextSibling.nodeType === Node.TEXT_NODE) {
+      const textContent = nextSibling.nodeValue;
+
+      const result = /^(?<effect>[^:]+):/.exec(textContent);
+      const effectText = result?.groups?.effect;
+
+      if (effectText && effectText.startsWith(FLUFF_PREFIX)) {
+        nextSibling.remove();
+      }
+    }
+  });
+}
+
 export function renderFluff(element) {
   const images = element.querySelectorAll("img.emoji");
 

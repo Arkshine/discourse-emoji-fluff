@@ -6,7 +6,11 @@ import {
   teardownAutocompleteEvents,
 } from "../lib/autocomplete";
 import { handleEmojiPicker } from "../lib/emoji-picker";
-import { applyEmojiOnlyClass, renderFluff } from "../lib/render-fluff";
+import {
+  applyEmojiOnlyClass,
+  removeFluff,
+  renderFluff,
+} from "../lib/render-fluff";
 import { closestSquareGrid } from "../lib/utils";
 
 class EmojiFluffInit {
@@ -23,8 +27,12 @@ class EmojiFluffInit {
 
       api.decorateCookedElement(
         (element) => {
-          renderFluff(element);
-          applyEmojiOnlyClass(element);
+          if (settings.enabled) {
+            renderFluff(element);
+            applyEmojiOnlyClass(element);
+          } else {
+            removeFluff(element);
+          }
         },
         { afterAdopt: true }
       );
