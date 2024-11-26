@@ -37,6 +37,10 @@ class EmojiFluffInit {
         { afterAdopt: true }
       );
 
+      if (!settings.enabled) {
+        return;
+      }
+
       const allowSelectorInAutocomplete = ["autocomplete", "both"].includes(
         settings.allow_selector_in
       );
@@ -47,7 +51,6 @@ class EmojiFluffInit {
       if (allowSelectorInAutocomplete || allowSelectorInEmojiPicker) {
         if (allowSelectorInAutocomplete) {
           api.modifyClass("component:d-editor", handleAutocomplete);
-          registerAutocompleteEvents();
         }
 
         if (allowSelectorInEmojiPicker) {
@@ -61,11 +64,17 @@ class EmojiFluffInit {
           "--fluff-selector-columns",
           closestSquareGrid(allowedEffects.split("|").length).columns
         );
+
+      if (allowSelectorInAutocomplete) {
+        registerAutocompleteEvents();
+      }
     });
   }
 
   teardown() {
-    teardownAutocompleteEvents();
+    if (["autocomplete", "both"].includes(settings.allow_selector_in)) {
+      teardownAutocompleteEvents();
+    }
   }
 }
 

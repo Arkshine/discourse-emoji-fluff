@@ -8,18 +8,18 @@ en:
         List of allowed effects. <br> 
         <details>
           <summary>Available Choices:</summary>
-          <span><span class="fluff fluff--flip">🎉</span><code>flip</code></span>
-          <span><span class="fluff fluff--flip_v">🎉</span><code>flip_v</code></span>
-          <span><span class="fluff fluff--spin">🎉</span><code>spin</code></span>
-          <span><span class="fluff fluff--pulse">🎉</span><code>pulse</code></span>
-          <span><span class="fluff fluff--bounce">🎉</span><code>bounce</code></span>
-          <span><span class="fluff fluff--wobble">🎉</span><code>wobble</code></span>
-          <span><span class="fluff fluff--float">🎉</span><code>float</code></span>
-          <span><span class="fluff fluff--slide">🎉</span><code>slide</code></span>
-          <span><span class="fluff fluff--fade">🎉</span><code>fade</code></span>
-          <span><span class="fluff fluff--invert">🎉</span><code>invert</code></span>
-          <span><span class="fluff fluff--hue">🎉</span><code>hue</code></span>
-          <span><span class="fluff fluff--greyscale">🎉</span><code>greyscale</code></span>
+          <span><span class="fluff fluff--flip"><i>🎉</i></span><code>flip</code></span>
+          <span><span class="fluff fluff--flip_v"><i>🎉</i></span><code>flip_v</code></span>
+          <span><span class="fluff fluff--spin"><i>🎉</i></span><code>spin</code></span>
+          <span><span class="fluff fluff--pulse"><i>🎉</i></span><code>pulse</code></span>
+          <span><span class="fluff fluff--bounce"><i>🎉</i></span><code>bounce</code></span>
+          <span><span class="fluff fluff--wobble"><i>🎉</i></span><code>wobble</code></span>
+          <span><span class="fluff fluff--float"><i>🎉</i></span><code>float</code></span>
+          <span><span class="fluff fluff--slide"><i>🎉</i></span><code>slide</code></span>
+          <span><span class="fluff fluff--fade"><i>🎉</i></span><code>fade</code></span>
+          <span><span class="fluff fluff--invert"><i>🎉</i></span><code>invert</code></span>
+          <span><span class="fluff fluff--hue"><i>🎉</i></span><code>hue</code></span>
+          <span><span class="fluff fluff--greyscale"><i>🎉</i></span><code>greyscale</code></span>
         </details>
 
       allow_selector_in: |
