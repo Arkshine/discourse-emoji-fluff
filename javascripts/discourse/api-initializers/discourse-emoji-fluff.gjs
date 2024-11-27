@@ -1,4 +1,5 @@
-import { setOwner } from "@ember/application";
+import { setOwner } from "@ember/owner";
+import { service } from "@ember/service";
 import { withPluginApi } from "discourse/lib/plugin-api";
 import {
   handleAutocomplete,
@@ -14,14 +15,15 @@ import {
 import { closestSquareGrid } from "../lib/utils";
 
 class EmojiFluffInit {
+  @service router;
+  @service siteSettings;
+  @service fluffPresence;
+
   constructor(owner) {
     setOwner(this, owner);
 
     withPluginApi("1.32.0", (api) => {
-      const allowedEffects = settings.allowed_effects;
-      const siteSettings = api.container.lookup("service:site-settings");
-
-      if (!allowedEffects.length || !siteSettings.enable_emoji) {
+      if (!settings.allowed_effects.length || !this.siteSettings.enable_emoji) {
         return;
       }
 
@@ -37,42 +39,61 @@ class EmojiFluffInit {
         { afterAdopt: true }
       );
 
+      this.updatePresence();
+
       if (!settings.enabled) {
         return;
       }
 
-      const allowSelectorInAutocomplete = ["autocomplete", "both"].includes(
-        settings.allow_selector_in
-      );
-      const allowSelectorInEmojiPicker = ["emoji-picker", "both"].includes(
-        settings.allow_selector_in
-      );
-
-      if (allowSelectorInAutocomplete || allowSelectorInEmojiPicker) {
-        if (allowSelectorInAutocomplete) {
+      if (this.allowSelectorInAutocomplete || this.allowSelectorInEmojiPicker) {
+        if (this.allowSelectorInAutocomplete) {
           api.modifyClass("component:d-editor", handleAutocomplete);
+          registerAutocompleteEvents();
         }
 
-        if (allowSelectorInEmojiPicker) {
+        if (this.allowSelectorInEmojiPicker) {
           api.modifyClass("component:emoji-picker", handleEmojiPicker);
         }
       }
 
-      document
-        .querySelector(":root")
-        .style.setProperty(
-          "--fluff-selector-columns",
-          closestSquareGrid(allowedEffects.split("|").length).columns
-        );
-
-      if (allowSelectorInAutocomplete) {
-        registerAutocompleteEvents();
-      }
+      this.updateCSSProperty();
     });
   }
 
+  updatePresence() {
+    this.router.on("routeDidChange", (transition) => {
+      if (transition.isAborted) {
+        return;
+      }
+
+      this.fluffPresence.setTo(
+        settings.enabled &&
+          ["discovery.", "topic.", "userPrivateMessages.user."].some(
+            (partial) => transition.targetName.startsWith(partial)
+          )
+      );
+    });
+  }
+
+  updateCSSProperty() {
+    document
+      .querySelector(":root")
+      .style.setProperty(
+        "--fluff-selector-columns",
+        closestSquareGrid(settings.allowed_effects.split("|").length).columns
+      );
+  }
+
+  get allowSelectorInAutocomplete() {
+    return ["autocomplete", "both"].includes(settings.allow_selector_in);
+  }
+
+  get allowSelectorInEmojiPicker() {
+    return ["emoji-picker", "both"].includes(settings.allow_selector_in);
+  }
+
   teardown() {
-    if (["autocomplete", "both"].includes(settings.allow_selector_in)) {
+    if (this.allowSelectorInEmojiPicker) {
       teardownAutocompleteEvents();
     }
   }
