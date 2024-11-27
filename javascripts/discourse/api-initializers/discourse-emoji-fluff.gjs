@@ -23,7 +23,10 @@ class EmojiFluffInit {
     setOwner(this, owner);
 
     withPluginApi("1.32.0", (api) => {
-      if (!settings.allowed_decorations.length || !this.siteSettings.enable_emoji) {
+      if (
+        !settings.allowed_decorations.length ||
+        !this.siteSettings.enable_emoji
+      ) {
         return;
       }
 
@@ -80,7 +83,8 @@ class EmojiFluffInit {
       .querySelector(":root")
       .style.setProperty(
         "--fluff-selector-columns",
-        closestSquareGrid(settings.allowed_decorations.split("|").length).columns
+        closestSquareGrid(settings.allowed_decorations.split("|").length)
+          .columns
       );
   }
 
