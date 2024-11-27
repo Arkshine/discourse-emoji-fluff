@@ -1,6 +1,7 @@
 import { setOwner } from "@ember/owner";
 import { service } from "@ember/service";
 import { withPluginApi } from "discourse/lib/plugin-api";
+import FluffEmojiPickerFooter from "../components/fluff-emoji-picker-footer";
 import {
   handleAutocomplete,
   registerAutocompleteEvents,
@@ -58,6 +59,7 @@ class EmojiFluffInit {
 
         if (this.allowSelectorInEmojiPicker) {
           api.modifyClass("component:emoji-picker", handleEmojiPicker);
+          api.renderInOutlet("emoji-picker-footer", FluffEmojiPickerFooter);
         }
       }
 
