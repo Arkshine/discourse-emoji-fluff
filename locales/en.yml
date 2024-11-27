@@ -3,9 +3,12 @@ en:
     description: ""
     settings:
       enabled: |
-        Enable or disable the functionnalities of the component but keeping the rendering active.
+        Turn on or off the functionalities of the component. <br><br>
+        <span class="desc">Disabling will prevent the emoji decoration from being applied. 
+        This is useful if you want to pause or plan to remove the component, but don't want to see the decoration code, such as <code>🙂spin:</code>, in the messages.<br>
+        For more information, check out <em>Reverting emoji decorations</em> in the topic.</span>
       allowed_decorations: |
-        List of allowed effects. <br> 
+        List of allowed decorations. <br> 
         <details class="settings">
           <summary>Available Choices:</summary>
           <span><span class="fluff fluff--flip"><i>🎉</i></span><code>flip</code></span>
