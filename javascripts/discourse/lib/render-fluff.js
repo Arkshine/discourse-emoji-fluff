@@ -42,7 +42,8 @@ export function renderFluff(element) {
 
       const allowedAdditionalEffects = ["flip", "flip_v"];
 
-      const isMainEffectAllowed = settings.allowed_effects.includes(mainEffect);
+      const isMainEffectAllowed =
+        settings.allowed_decorations.includes(mainEffect);
       const filteredAdditionalEffects = [
         ...new Set(
           additionalEffects.filter((effect) =>

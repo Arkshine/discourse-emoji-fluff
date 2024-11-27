@@ -4,7 +4,7 @@ en:
     settings:
       enabled: |
         Enable or disable the functionnalities of the component but keeping the rendering active.
-      allowed_effects: |
+      allowed_decorations: |
         List of allowed effects. <br> 
         <details class="settings">
           <summary>Available Choices:</summary>

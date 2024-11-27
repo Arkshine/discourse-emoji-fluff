@@ -2,7 +2,7 @@ enabled:
   default: true
   type: "bool"
 
-allowed_effects:
+allowed_decorations:
   default: "flip|flip_v|spin|pulse|bounce|wobble|float|slide|fade|invert|hue|greyscale"
   type: "list"
 

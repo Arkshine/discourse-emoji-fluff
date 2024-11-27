@@ -14,7 +14,7 @@ export default class FluffSelector extends Component {
   @service fluffEmojiPicker;
 
   get allowedEffects() {
-    return settings.allowed_effects.split("|");
+    return settings.allowed_decorations.split("|");
   }
 
   get isEmojiPickerContext() {
