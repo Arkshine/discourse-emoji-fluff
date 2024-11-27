@@ -3,7 +3,7 @@ enabled:
   type: "bool"
 
 allowed_decorations:
-  default: "flip|flip_v|spin|pulse|bounce|wobble|float|slide|fade|invert|hue|greyscale"
+  default: "flip|flip_v|spin|pulse|bounce|wobble|float|slide|fade|invert|hue|gray"
   type: "list"
 
 allow_selector_in:

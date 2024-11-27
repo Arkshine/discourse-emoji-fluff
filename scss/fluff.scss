@@ -190,7 +190,7 @@
     }
   }
 
-  &greyscale {
+  &gray {
     img,
     details.settings & i {
       filter: grayscale(100%);

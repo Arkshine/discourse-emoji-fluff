@@ -19,7 +19,7 @@ en:
           <span><span class="fluff fluff--fade"><i>🎉</i></span><code>fade</code></span>
           <span><span class="fluff fluff--invert"><i>🎉</i></span><code>invert</code></span>
           <span><span class="fluff fluff--hue"><i>🎉</i></span><code>hue</code></span>
-          <span><span class="fluff fluff--greyscale"><i>🎉</i></span><code>greyscale</code></span>
+          <span><span class="fluff fluff--gray"><i>🎉</i></span><code>gray</code></span>
         </details>
 
       allow_selector_in: |
