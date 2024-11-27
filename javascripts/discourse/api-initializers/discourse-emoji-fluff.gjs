@@ -22,7 +22,9 @@ class EmojiFluffInit {
   constructor(owner) {
     setOwner(this, owner);
 
-    withPluginApi("1.32.0", (api) => {
+    // 2024-10-30 - API 1.38.0
+    // 2024-10-24 - Allow parent method to be called using `super.` in `modifyClass`
+    withPluginApi("1.38.0", (api) => {
       if (
         !settings.allowed_decorations.length ||
         !this.siteSettings.enable_emoji
