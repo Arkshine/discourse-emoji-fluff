@@ -9,10 +9,10 @@ export function removeFluff(element) {
     if (nextSibling && nextSibling.nodeType === Node.TEXT_NODE) {
       const textContent = nextSibling.nodeValue;
 
-      const result = /^(?<effect>[^:]+):/.exec(textContent);
-      const effectText = result?.groups?.effect;
+      const result = /^(?<decoration>[^:]+):/.exec(textContent);
+      const decorationText = result?.groups?.decoration;
 
-      if (effectText && effectText.startsWith(FLUFF_PREFIX)) {
+      if (decorationText && decorationText.startsWith(FLUFF_PREFIX)) {
         nextSibling.remove();
       }
     }
@@ -28,43 +28,46 @@ export function renderFluff(element) {
     if (nextSibling && nextSibling.nodeType === Node.TEXT_NODE) {
       const textContent = nextSibling.nodeValue;
 
-      const result = /^(?<effect>[^:]+):/.exec(textContent);
-      const effectText = result?.groups?.effect;
+      const result = /^(?<decoration>[^:]+):/.exec(textContent);
+      const decorationText = result?.groups?.decoration;
 
-      if (!effectText || !effectText.startsWith(FLUFF_PREFIX)) {
+      if (!decorationText || !decorationText.startsWith(FLUFF_PREFIX)) {
         return;
       }
 
-      const [mainEffect, ...additionalEffects] = effectText
+      const [mainDecoration, ...additionalDecoration] = decorationText
         .replace(FLUFF_PREFIX, "")
         .split(",")
-        .map((effect) => effect.trim());
+        .map((decoration) => decoration.trim());
 
-      const allowedAdditionalEffects = ["flip", "flip_v"];
+      const allowedAdditionalDecorations = ["flip", "flip_v"];
 
-      const isMainEffectAllowed =
-        settings.allowed_decorations.includes(mainEffect);
-      const filteredAdditionalEffects = [
+      const isMainDecorationAllowed =
+        settings.allowed_decorations.includes(mainDecoration);
+      const filteredAdditionalDecorations = [
         ...new Set(
-          additionalEffects.filter((effect) =>
-            allowedAdditionalEffects.includes(effect)
+          additionalDecoration.filter((decoration) =>
+            allowedAdditionalDecorations.includes(decoration)
           )
         ),
       ];
 
-      if (isMainEffectAllowed) {
+      if (isMainDecorationAllowed) {
         const span = document.createElement("span");
 
-        const allEffects = [mainEffect, ...filteredAdditionalEffects];
-        span.className = `fluff ${allEffects
+        const allDecorations = [
+          mainDecoration,
+          ...filteredAdditionalDecorations,
+        ];
+        span.className = `fluff ${allDecorations
           .map((e) => `fluff--${e}`)
           .join(" ")}`;
         img.parentNode.insertBefore(span, img);
         span.appendChild(img);
 
         schedule("afterRender", () => {
-          const hasFlip = allEffects.some((e) => e === "flip");
-          const hasFlipV = allEffects.some((e) => e === "flip_v");
+          const hasFlip = allDecorations.some((e) => e === "flip");
+          const hasFlipV = allDecorations.some((e) => e === "flip_v");
 
           if (hasFlip || hasFlipV) {
             const transform =
@@ -87,7 +90,7 @@ export function renderFluff(element) {
                 c = -c;
               }
 
-              if (mainEffect === "slide") {
+              if (mainDecoration === "slide") {
                 tx = 0;
               }
 
@@ -102,7 +105,7 @@ export function renderFluff(element) {
           }
         });
 
-        const restOfText = textContent.slice(effectText.length + 1);
+        const restOfText = textContent.slice(decorationText.length + 1);
         if (restOfText) {
           nextSibling.nodeValue = restOfText;
         } else {

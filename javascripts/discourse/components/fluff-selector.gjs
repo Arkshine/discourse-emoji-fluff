@@ -13,7 +13,7 @@ export default class FluffSelector extends Component {
   @service site;
   @service fluffEmojiPicker;
 
-  get allowedEffects() {
+  get allowedDecorations() {
     return settings.allowed_decorations.split("|");
   }
 
@@ -38,8 +38,8 @@ export default class FluffSelector extends Component {
   }
 
   @action
-  onMouseHover(effect) {
-    this.fluffEmojiPicker.hoveredFluff = effect;
+  onMouseHover(decoration) {
+    this.fluffEmojiPicker.hoveredFluff = decoration;
   }
 
   @action
@@ -49,9 +49,9 @@ export default class FluffSelector extends Component {
   }
 
   @action
-  selectFluff(effect) {
+  selectFluff(decoration) {
     if (this.isEmojiPickerContext) {
-      this.fluffEmojiPicker.selectedFluff = effect;
+      this.fluffEmojiPicker.selectedFluff = decoration;
       this.fluffEmojiPicker.selectedTarget?.dispatchEvent(
         new CustomEvent("click", {
           bubbles: true,
@@ -64,7 +64,7 @@ export default class FluffSelector extends Component {
     const element = this.itemElement;
 
     if (element) {
-      this.data.fluff = effect;
+      this.data.fluff = decoration;
       this.tooltip.close(FLUFF_EMOJI_PICKER_ID);
 
       element.dispatchEvent(new CustomEvent("click"));
@@ -72,23 +72,23 @@ export default class FluffSelector extends Component {
   }
 
   <template>
-    {{#each this.allowedEffects as |effect|}}
+    {{#each this.allowedDecorations as |decoration|}}
       <DButton
-        @translatedTitle={{effect}}
-        @action={{fn this.selectFluff effect}}
+        @translatedTitle={{decoration}}
+        @action={{fn this.selectFluff decoration}}
         class="btn-transparent btn-fluff-container"
-        {{on "mouseover" (fn this.onMouseHover effect)}}
-        {{on "mouseout" (fn this.onMouseOut effect)}}
+        {{on "mouseover" (fn this.onMouseHover decoration)}}
+        {{on "mouseout" (fn this.onMouseOut decoration)}}
       >
-        <div class={{concatClass "fluff" (concat "fluff--" effect)}}>
+        <div class={{concatClass "fluff" (concat "fluff--" decoration)}}>
           {{#if @data.src}}
             <img
               src={{@data.src}}
               class={{concatClass "emoji"}}
-              title="effect"
+              title="decoration"
             />
           {{else}}
-            {{replaceEmoji (concat ":" @data.code ":") title=effect}}
+            {{replaceEmoji (concat ":" @data.code ":") title=decoration}}
           {{/if}}
         </div>
       </DButton>
