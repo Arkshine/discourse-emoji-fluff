@@ -17,6 +17,12 @@ RSpec.describe "Emoji Fluff", system: true do
 
   let(:composer) { PageObjects::Components::Composer.new }
 
+  before do
+    theme.update_setting(:enabled, true)
+    theme.update_setting(:allow_selector_in, "both")
+    theme.save!
+  end
+
   before { sign_in user }
 
   it "renders fluff in post" do
