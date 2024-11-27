@@ -8,10 +8,6 @@ export default class FluffEmojiPicker extends Service {
   @tracked selectedTarget;
   @tracked selectedEmoji;
   @tracked selectedFluff;
-
-  @tracked lastSelectedEmoji;
-  @tracked lastSelectedTarget;
-
   @tracked hoveredFluff;
 
   init() {
@@ -24,10 +20,6 @@ export default class FluffEmojiPicker extends Service {
     this.selectedTarget = null;
     this.selectedEmoji = "";
     this.selectedFluff = "";
-
-    this.lastSelectedEmoji = "";
-    this.lastSelectedTarget = null;
-
     this.hoveredFluff = "";
   }
 }
