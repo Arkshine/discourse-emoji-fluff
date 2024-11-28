@@ -1,4 +1,3 @@
-#!/usr/bin/env ruby
 # frozen_string_literal: true
 
 module EmojiFluffCleaner
@@ -17,6 +16,8 @@ module EmojiFluffCleaner
         %r{\[pre\][\s\S]*?\[/pre\]}m,
       ],
     }
+
+    i = 0
 
     Post
       .raw_match(fluff_regex.source, "regex")
@@ -40,27 +41,39 @@ module EmojiFluffCleaner
         next if text == p.raw
 
         begin
-          p.revise(Discourse.system_user, { raw: text }, bypass_bump: true, skip_revision: skip_revision)
+          p.revise(
+            Discourse.system_user,
+            { raw: text },
+            bypass_bump: true,
+            skip_revision: skip_revision,
+          )
           putc "."
+          i += 1
         rescue StandardError => e
           puts "\nFailed to remap post (topic_id: #{p.topic_id}, post_id: #{p.id})\n, error: #{e.message}"
         end
       end
+
+    i
   end
 end
 
-if __FILE__ == $0
-  require_relative "../config/environment"
-  require 'optparse'
+desc "Clean emoji decorations from posts"
+task "fluff:delete_all", %i[skip_revision] => [:environment] do |_, args|
+  require "highline/import"
 
-  options = { skip_revision: false }
-  OptionParser.new do |opts|
-    opts.banner = "Usage: clean_emoji_decorations.rb [options]"
+  args.with_defaults(skip_revision: true)
+  skip_revision = args[:skip_revision]
 
-    opts.on("--skip-revision", "Skip revision") do
-      options[:skip_revision] = true
-    end
-  end.parse!
+  if skip_revision != "true" && skip_revision != "false"
+    puts "ERROR: Expecting rake fluff:delete_all[skip_revision] where skip_revision is true or false"
+    exit 1
+  else
+    confirm_replace = ask("Are you sure you want to remove any fluff decorations? (Y/n)")
+    exit 1 unless (confirm_replace == "" || confirm_replace.downcase == "y")
+  end
 
-  EmojiFluffCleaner.clean(skip_revision: options[:skip_revision])
+  puts "Deleting"
+  total = EmojiFluffCleaner.clean(skip_revision: skip_revision == "true")
+  puts "", "#{total} posts updated!", ""
 end
