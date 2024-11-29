@@ -1,5 +1,7 @@
 # Emoji Fluff
 
+https://meta.discourse.org/t/emoji-fluff/339163.
+
 ## Description
 
 Emoji Fluff allows users to put mirrored or animated emojis in their posts.
