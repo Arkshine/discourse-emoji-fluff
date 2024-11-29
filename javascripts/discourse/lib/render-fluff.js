@@ -1,6 +1,10 @@
 import { schedule } from "@ember/runloop";
 import { FLUFF_PREFIX } from "./constants";
 
+const fluffReplacements = {
+  invert: "negative",
+};
+
 export function removeFluff(element) {
   const images = element.querySelectorAll("img.emoji");
   images.forEach((img) => {
@@ -17,6 +21,12 @@ export function removeFluff(element) {
       }
     }
   });
+}
+
+function allowedDecorations(code) {
+  return (
+    settings.allowed_decorations.includes(code) || code in fluffReplacements
+  );
 }
 
 export function renderFluff(element) {
@@ -42,8 +52,7 @@ export function renderFluff(element) {
 
       const allowedAdditionalDecorations = ["flip", "flip_v"];
 
-      const isMainDecorationAllowed =
-        settings.allowed_decorations.includes(mainDecoration);
+      const isMainDecorationAllowed = allowedDecorations(mainDecoration);
       const filteredAdditionalDecorations = [
         ...new Set(
           additionalDecoration.filter((decoration) =>

@@ -20,7 +20,7 @@ en:
           <span><span class="fluff fluff--float"><i>🎉</i></span><code>float</code></span>
           <span><span class="fluff fluff--slide"><i>🎉</i></span><code>slide</code></span>
           <span><span class="fluff fluff--fade"><i>🎉</i></span><code>fade</code></span>
-          <span><span class="fluff fluff--invert"><i>🎉</i></span><code>invert</code></span>
+          <span><span class="fluff fluff--negative"><i>🎉</i></span><code>negative</code></span>
           <span><span class="fluff fluff--hue"><i>🎉</i></span><code>hue</code></span>
           <span><span class="fluff fluff--gray"><i>🎉</i></span><code>gray</code></span>
         </details>

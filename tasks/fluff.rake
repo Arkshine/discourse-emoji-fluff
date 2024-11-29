@@ -3,7 +3,7 @@
 module EmojiFluffCleaner
   def self.clean(skip_revision: false)
     fluff_regex =
-      /(:[\w-]+(?:t\d{2,6})?):f-(?:flip|flip_v|spin|pulse|bounce|wobble|float|slide|fade|invert|hue|gray),?(?:flip|flip_v)*:/
+      /(:[\w-]+(?:t\d{2,6})?):f-(?:flip|flip_v|spin|pulse|bounce|wobble|float|slide|fade|invert|negative|hue|gray),?(?:flip|flip_v)*:/
 
     patterns = {
       INLINE: [%r{<code>[^<\n]+?</code>}],

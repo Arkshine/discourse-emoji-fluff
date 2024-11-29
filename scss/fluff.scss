@@ -176,7 +176,8 @@
     }
   }
 
-  &invert {
+  &invert,
+  &negative {
     img,
     details.settings & i {
       filter: invert(1);
