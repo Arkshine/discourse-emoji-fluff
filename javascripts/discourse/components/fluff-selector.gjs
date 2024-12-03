@@ -58,6 +58,10 @@ export default class FluffSelector extends Component {
           cancelable: true,
         })
       );
+
+      if (this.site.isMobileDevice) {
+        this.tooltip.close(FLUFF_EMOJI_PICKER_ID);
+      }
       return;
     }
 
