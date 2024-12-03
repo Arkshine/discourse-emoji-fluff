@@ -72,6 +72,8 @@ export function renderFluff(element) {
           .map((e) => `fluff--${e}`)
           .join(" ")}`;
         img.parentNode.insertBefore(span, img);
+        img.title = `${img.title}${decorationText}:`;
+        img.alt = `${img.alt}${decorationText}:`;
         span.appendChild(img);
 
         schedule("afterRender", () => {
