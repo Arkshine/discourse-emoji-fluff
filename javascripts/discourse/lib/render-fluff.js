@@ -130,69 +130,33 @@ export function applyEmojiOnlyClass(element) {
 
   paragraphs.forEach((paragraph) => {
     const children = Array.from(paragraph.childNodes);
-    let emojiGroup = [];
-    let validLine = true;
+    const nonEmptyNodes = children.filter(
+      (node) =>
+        !(node.nodeType === Node.TEXT_NODE && node.nodeValue.trim() === "") &&
+        !(node.nodeType === Node.ELEMENT_NODE && node.nodeName === "BR")
+    );
 
-    children.forEach((node, index) => {
+    const isOnlyEmojis = nonEmptyNodes.every((node) => {
       if (node.nodeType === Node.ELEMENT_NODE) {
-        const isWrapperEmoji =
-          node.matches("span.fluff") && node.querySelector("img.emoji");
-        const isDirectEmoji = node.matches("img.emoji");
-
-        if (isWrapperEmoji || isDirectEmoji) {
-          emojiGroup.push(node);
-        } else if (!node.matches("br")) {
-          validLine = false;
-        }
-      } else if (node.nodeType === Node.TEXT_NODE) {
-        if (node.nodeValue.trim() !== "") {
-          validLine = false;
-        }
+        return (
+          node.matches("img.emoji") ||
+          (node.matches("span.fluff") && node.querySelector("img.emoji"))
+        );
       }
-
-      const nextNode = children[index + 1];
-
-      if (
-        emojiGroup.length >= 1 &&
-        validLine &&
-        (!nextNode ||
-          (nextNode.nodeType === Node.ELEMENT_NODE && nextNode.matches("br")))
-      ) {
-        let spaceCount = 0;
-
-        for (let i = Math.max(0, index - emojiGroup.length); i < index; i++) {
-          const child = children[i];
-
-          if (child.nodeType === Node.TEXT_NODE && child.nodeValue === " ") {
-            spaceCount++;
-          }
-        }
-
-        if (spaceCount >= emojiGroup.length - 1) {
-          const hasWrapperEmoji = emojiGroup.some((e) =>
-            e.matches("span.fluff")
-          );
-          const allDirectEmoji = emojiGroup.every((e) =>
-            e.matches("img.emoji")
-          );
-
-          if (hasWrapperEmoji || !allDirectEmoji) {
-            emojiGroup.forEach((emoji) => {
-              emoji.classList.add("only-emoji");
-
-              if (emoji.matches("span.fluff")) {
-                emoji.querySelector("img.emoji")?.classList.add("only-emoji");
-              }
-            });
-          }
-        }
-
-        emojiGroup = [];
-        validLine = true;
-      } else if (!validLine || (!nextNode && emojiGroup.length < 1)) {
-        emojiGroup = [];
-        validLine = true;
-      }
+      return false;
     });
+
+    const emojiCount = nonEmptyNodes.length;
+
+    if (isOnlyEmojis && emojiCount <= 3) {
+      nonEmptyNodes.forEach((node) => {
+        if (node.matches("img.emoji")) {
+          node.classList.add("only-emoji");
+        } else if (node.matches("span.fluff")) {
+          node.classList.add("only-emoji");
+          node.querySelector("img.emoji")?.classList.add("only-emoji");
+        }
+      });
+    }
   });
 }
