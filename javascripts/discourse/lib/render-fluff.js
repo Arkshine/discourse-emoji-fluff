@@ -126,37 +126,49 @@ export function renderFluff(element) {
 }
 
 export function applyEmojiOnlyClass(element) {
-  const paragraphs = element.querySelectorAll("p");
+  element.querySelectorAll("p").forEach((paragraph) => {
+    const childrens = Array.from(paragraph.childNodes);
+    let currentLines = [];
 
-  paragraphs.forEach((paragraph) => {
-    const children = Array.from(paragraph.childNodes);
-    const nonEmptyNodes = children.filter(
-      (node) =>
-        !(node.nodeType === Node.TEXT_NODE && node.nodeValue.trim() === "") &&
-        !(node.nodeType === Node.ELEMENT_NODE && node.nodeName === "BR")
-    );
-
-    const isOnlyEmojis = nonEmptyNodes.every((node) => {
-      if (node.nodeType === Node.ELEMENT_NODE) {
-        return (
-          node.matches("img.emoji") ||
-          (node.matches("span.fluff") && node.querySelector("img.emoji"))
-        );
-      }
-      return false;
-    });
-
-    const emojiCount = nonEmptyNodes.length;
-
-    if (isOnlyEmojis && emojiCount <= 3) {
-      nonEmptyNodes.forEach((node) => {
-        if (node.matches("img.emoji")) {
-          node.classList.add("only-emoji");
-        } else if (node.matches("span.fluff")) {
-          node.classList.add("only-emoji");
-          node.querySelector("img.emoji")?.classList.add("only-emoji");
+    childrens.forEach((children, index) => {
+      if (children.nodeName === "BR" || index === childrens.length - 1) {
+        if (children.nodeName !== "BR") {
+          currentLines.push(children);
         }
-      });
-    }
+
+        if (currentLines.length) {
+          const nonEmptyNodes = currentLines.filter(
+            (node) =>
+              !(
+                node.nodeType === Node.TEXT_NODE && node.nodeValue.trim() === ""
+              )
+          );
+
+          if (
+            nonEmptyNodes.length <= 3 &&
+            nonEmptyNodes.every(
+              (node) =>
+                node.nodeType === Node.ELEMENT_NODE &&
+                (node.matches("img.emoji") ||
+                  (node.matches("span.fluff") &&
+                    node.querySelector("img.emoji")))
+            )
+          ) {
+            nonEmptyNodes.forEach((node) => {
+              if (node.matches("img.emoji")) {
+                node.classList.add("only-emoji");
+              } else if (node.matches("span.fluff")) {
+                node.classList.add("only-emoji");
+                node.querySelector("img.emoji")?.classList.add("only-emoji");
+              }
+            });
+          }
+        }
+
+        currentLines = [];
+      } else {
+        currentLines.push(children);
+      }
+    });
   });
 }

@@ -24,7 +24,12 @@ RSpec.describe "Emoji Only Class", system: true do
     end
 
     fab!(:post_too_many_emojis) do
-      Fabricate(:post, raw: ":smile: :heart: :+1: :star:", topic: topic, skip_validation: true)
+      Fabricate(
+        :post,
+        raw: ":smile:f-spin: :heart:f-spin: :+1:f-spin: :star:f-spin:",
+        topic: topic,
+        skip_validation: true,
+      )
     end
 
     fab!(:post_with_text) do
@@ -38,6 +43,10 @@ RSpec.describe "Emoji Only Class", system: true do
         topic: topic,
         skip_validation: true,
       )
+    end
+
+    fab!(:post_single_with_line_break) do
+      Fabricate(:post, raw: ":smile:f-bounce:\ntest", topic: topic, skip_validation: true)
     end
 
     it "applies only-emoji class to single emoji" do
@@ -74,7 +83,15 @@ RSpec.describe "Emoji Only Class", system: true do
       visit("/t/#{topic.id}/#{post_multiline.post_number}")
 
       within(find("#post_#{post_multiline.post_number}")) do
-        expect(page).to have_no_css(".fluff.only-emoji")
+        expect(page).to have_css(".fluff.only-emoji")
+      end
+    end
+
+    it "applies only-emoji class to emoji when separated by line break" do
+      visit("/t/#{topic.id}/#{post_single_with_line_break.post_number}")
+
+      within(find("#post_#{post_single_with_line_break.post_number}")) do
+        expect(page).to have_css(".fluff.only-emoji")
       end
     end
   end
