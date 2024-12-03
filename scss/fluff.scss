@@ -108,7 +108,10 @@
   display: inline-flex;
   vertical-align: text-bottom;
   position: relative;
-  user-select: none;
+
+  .fluff-selector-dropdown-content & {
+    user-select: none;
+  }
 }
 
 .fluff-- {
