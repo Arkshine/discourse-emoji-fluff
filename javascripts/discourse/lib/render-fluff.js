@@ -16,7 +16,14 @@ export function removeFluff(element) {
       const result = /^(?<decoration>[^:]+):/.exec(textContent);
       const decorationText = result?.groups?.decoration;
 
-      if (decorationText && decorationText.startsWith(FLUFF_PREFIX)) {
+      if (!decorationText || !decorationText.startsWith(FLUFF_PREFIX)) {
+        return;
+      }
+
+      const restOfText = textContent.slice(decorationText.length + 1);
+      if (restOfText) {
+        nextSibling.nodeValue = restOfText;
+      } else {
         nextSibling.remove();
       }
     }
