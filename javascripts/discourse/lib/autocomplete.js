@@ -2,8 +2,10 @@ import { schedule } from "@ember/runloop";
 import { service } from "@ember/service";
 import { emojiSearch, isSkinTonableEmoji } from "pretty-text/emoji";
 import { translations } from "pretty-text/emoji/data";
+import EmojiPickerDetached from "discourse/components/emoji-picker/detached";
 import { SKIP } from "discourse/lib/autocomplete";
 import { emojiUrlFor } from "discourse/lib/text";
+import virtualElementFromTextRange from "discourse/lib/virtual-element-from-text-range";
 import { findRawTemplate } from "discourse-common/lib/raw-templates";
 import I18n from "discourse-i18n";
 import { FLUFF_EMOJI_PICKER_ID, FLUFF_PREFIX } from "./constants";
@@ -118,7 +120,7 @@ export function handleAutocomplete(Superclass) {
 
         transformComplete: (v) => {
           if (v.code) {
-            this.emojiStore.track(v.code);
+            this.emojiStore.trackEmojiForContext(v.code);
             let code = `${v.code}:`;
             if (v.fluff) {
               code += `${FLUFF_PREFIX}${v.fluff}:`;
@@ -126,9 +128,21 @@ export function handleAutocomplete(Superclass) {
             return code;
           } else {
             this.textManipulation.autocomplete({ cancel: true });
-            this.set("emojiPickerIsActive", true);
-            this.set("emojiFilter", v.term);
 
+            const menuOptions = {
+              identifier: "emoji-picker",
+              component: EmojiPickerDetached,
+              modalForMobile: true,
+              data: {
+                didSelectEmoji: (emoji) => {
+                  this.textManipulation.emojiSelected(emoji);
+                },
+                term: v.term,
+              },
+            };
+
+            const virtualElement = virtualElementFromTextRange();
+            this.menuInstance = this.menu.show(virtualElement, menuOptions);
             return "";
           }
         },
@@ -143,9 +157,10 @@ export function handleAutocomplete(Superclass) {
             }
 
             if (term === "") {
-              if (this.emojiStore.favorites.length) {
+              const favorites = this.emojiStore.favoritesForContext("topic");
+              if (favorites.length) {
                 return resolve(
-                  this.emojiStore.favorites
+                  favorites
                     .filter((f) => !this.site.denied_emojis?.includes(f))
                     .slice(0, 5)
                 );
