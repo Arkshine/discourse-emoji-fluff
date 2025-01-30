@@ -74,7 +74,7 @@ Read https://meta.discourse.org/t/administrative-bulk-operations/118349?u=canapi
 
 ⚠️ **Always make a backup before running this task. There is no guarantee that it won't remove unwanted strings. Use it at your own risk, and review the code if in doubt.**
 
-## How to create your own fluffs
+## How to create your fluffs
 
 When an emoji is altered with a fluff it is wrapped by a new `<span>` tag:
 
