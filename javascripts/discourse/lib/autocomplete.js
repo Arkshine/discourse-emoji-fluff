@@ -4,10 +4,10 @@ import { emojiSearch, isSkinTonableEmoji } from "pretty-text/emoji";
 import { translations } from "pretty-text/emoji/data";
 import EmojiPickerDetached from "discourse/components/emoji-picker/detached";
 import { SKIP } from "discourse/lib/autocomplete";
+import { findRawTemplate } from "discourse/lib/raw-templates";
 import { emojiUrlFor } from "discourse/lib/text";
 import virtualElementFromTextRange from "discourse/lib/virtual-element-from-text-range";
-import { findRawTemplate } from "discourse-common/lib/raw-templates";
-import I18n from "discourse-i18n";
+import { i18n } from "discourse-i18n";
 import { FLUFF_EMOJI_PICKER_ID, FLUFF_PREFIX } from "./constants";
 
 function onItemMouseover(li, event) {
@@ -76,14 +76,16 @@ export function handleAutocomplete(Superclass) {
 
         onRender: () => {
           if (!this.site.mobileView) {
-            document
-              .querySelectorAll(".autocomplete.with-fluff li")
-              .forEach((li) => {
-                li.addEventListener(
-                  "mouseover",
-                  onItemMouseover.bind(this, li)
-                );
-              });
+            schedule("afterRender", () => {
+              document
+                .querySelectorAll(".autocomplete.with-fluff li")
+                .forEach((li) => {
+                  li.addEventListener(
+                    "mouseover",
+                    onItemMouseover.bind(this, li)
+                  );
+                });
+            });
           }
         },
 
@@ -120,7 +122,7 @@ export function handleAutocomplete(Superclass) {
 
         transformComplete: (v) => {
           if (v.code) {
-            this.emojiStore.trackEmojiForContext(v.code);
+            this.emojiStore.trackEmojiForContext(v.code, "topic");
             let code = `${v.code}:`;
             if (v.fluff) {
               code += `${FLUFF_PREFIX}${v.fluff}:`;
@@ -141,7 +143,17 @@ export function handleAutocomplete(Superclass) {
               },
             };
 
-            const virtualElement = virtualElementFromTextRange();
+            let virtualElement;
+            if (event instanceof KeyboardEvent) {
+              // when user selects more by pressing enter
+              virtualElement = virtualElementFromTextRange();
+            } else {
+              // when user selects more by clicking on it
+              // using textarea as a fallback as it's hard to have a good position
+              // given the autocomplete menu will be gone by the time we are here
+              virtualElement = this.textManipulation.textarea;
+            }
+
             this.menuInstance = this.menu.show(virtualElement, menuOptions);
             return "";
           }
@@ -222,7 +234,7 @@ export function handleAutocomplete(Superclass) {
             })
             .then((list) => {
               if (list.length) {
-                list.push({ label: I18n.t("composer.more_emoji"), term });
+                list.push({ label: i18n("composer.more_emoji"), term });
               }
               return list;
             });

@@ -4,8 +4,8 @@ import { schedule } from "@ember/runloop";
 import { service } from "@ember/service";
 import { modifier } from "ember-modifier";
 import DTooltip from "discourse/components/d-tooltip";
-import dIcon from "discourse-common/helpers/d-icon";
-import { bind } from "discourse-common/utils/decorators";
+import dIcon from "discourse/helpers/d-icon";
+import { bind } from "discourse/lib/decorators";
 import { FLUFF_EMOJI_PICKER_ID } from "../lib/constants";
 import FluffSelector from "./fluff-selector";
 

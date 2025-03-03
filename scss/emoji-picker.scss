@@ -7,16 +7,19 @@
 }
 
 .fluff-toggle-switch {
-  padding: 0;
+  padding-left: 0;
+  padding-right: 0.35em;
 
-  .emoji-picker-footer & {
-    margin-right: 0.5em;
-    margin-left: 1em;
+  .action-feedback-alert {
+    transform: translateX(-32px);
+    border: 1px solid var(--tertiary-low);
+    height: auto;
+    user-select: none;
+    pointer-events: none;
   }
 
   &__icon {
     position: relative;
-
     color: var(--primary-high);
     border: 1px solid rgba(0, 0, 0, 0);
     padding: 0.25em;

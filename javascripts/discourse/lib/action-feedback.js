@@ -1,5 +1,5 @@
-import { SVG_NAMESPACE } from "discourse-common/lib/icon-library";
-import I18n from "discourse-i18n";
+import { SVG_NAMESPACE } from "discourse/lib/icon-library";
+import { i18n } from "discourse-i18n";
 
 // Original code from Discourse, simplified and adjusted to be more generic.
 
@@ -23,7 +23,7 @@ export function showAlert(selectorClass, messageKey, withCheckmark) {
 
   actionBtn?.classList.add("action-feedback-button");
 
-  createAlert(I18n.t(messageKey), actionBtn);
+  createAlert(i18n(messageKey), actionBtn);
 
   if (withCheckmark) {
     createCheckmark(actionBtn, selectorClass);
