@@ -59,9 +59,7 @@ export default class FluffSelector extends Component {
         })
       );
 
-      if (this.site.isMobileDevice) {
-        this.tooltip.close(FLUFF_EMOJI_PICKER_ID);
-      }
+      this.tooltip.close(FLUFF_EMOJI_PICKER_ID);
       return;
     }
 
@@ -89,7 +87,7 @@ export default class FluffSelector extends Component {
             <img
               src={{@data.src}}
               class={{concatClass "emoji"}}
-              title="decoration"
+              title={{decoration}}
             />
           {{else}}
             {{replaceEmoji (concat ":" @data.code ":") title=decoration}}

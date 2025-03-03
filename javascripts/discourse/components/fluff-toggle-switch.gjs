@@ -3,18 +3,24 @@ import { action } from "@ember/object";
 import { service } from "@ember/service";
 import DButton from "discourse/components/d-button";
 import concatClass from "discourse/helpers/concat-class";
-import dIcon from "discourse-common/helpers/d-icon";
+import icon from "discourse/helpers/d-icon";
 import actionFeedback from "../lib/action-feedback";
+import { FLUFF_EMOJI_PICKER_ID } from "../lib/constants";
 
 export default class FluffToggleSwitch extends Component {
   @service fluffEmojiPicker;
+  @service tooltip;
 
   @action
   toggle() {
     this.fluffEmojiPicker.enabled = !this.fluffEmojiPicker.enabled;
 
+    if (!this.fluffEmojiPicker.enabled) {
+      this.tooltip.close(FLUFF_EMOJI_PICKER_ID);
+    }
+
     actionFeedback({
-      selectorClass: ".emoji-picker.opened .fluff-toggle-switch",
+      selectorClass: ".emoji-picker .fluff-toggle-switch",
       messageKey: themePrefix(
         this.fluffEmojiPicker.enabled
           ? "fluff_selector.toggle_switch.enabled"
@@ -29,7 +35,7 @@ export default class FluffToggleSwitch extends Component {
       @action={{this.toggle}}
       @translatedTitle={{@title}}
     >
-      {{dIcon
+      {{icon
         @icon
         class=(concatClass
           "fluff-toggle-switch__icon"

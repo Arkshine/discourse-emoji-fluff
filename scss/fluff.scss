@@ -2,6 +2,7 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
@@ -11,6 +12,7 @@
   from {
     transform: scale(1);
   }
+
   to {
     transform: scale(1.2);
   }
@@ -20,6 +22,7 @@
   from {
     transform: translateY(0);
   }
+
   to {
     transform: translateY(-35%);
   }
@@ -29,6 +32,7 @@
   from {
     transform: rotate(45deg);
   }
+
   to {
     transform: rotate(-45deg);
   }
@@ -38,27 +42,35 @@
   0% {
     transform: translate(0, 0);
   }
+
   12.5% {
     transform: translate(-3%, -10%);
   }
+
   25% {
     transform: translate(3%, -20%);
   }
+
   37.5% {
     transform: translate(-3%, -30%);
   }
+
   50% {
     transform: translate(0, -35%);
   }
+
   62.5% {
     transform: translate(3%, -30%);
   }
+
   75% {
     transform: translate(-3%, -20%);
   }
+
   87.5% {
     transform: translate(3%, -10%);
   }
+
   100% {
     transform: translate(0, 0);
   }
@@ -68,6 +80,7 @@
   from {
     transform: translateX(100%);
   }
+
   to {
     transform: translateX(-100%);
   }
@@ -77,6 +90,7 @@
   from {
     filter: hue-rotate(0deg);
   }
+
   to {
     filter: hue-rotate(360deg);
   }
@@ -86,6 +100,7 @@
   from {
     opacity: 1;
   }
+
   to {
     opacity: 0;
   }
@@ -166,6 +181,7 @@
 
   &slide {
     overflow: hidden;
+
     img,
     details.settings & i {
       animation: f-slide 2s infinite linear;

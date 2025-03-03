@@ -66,15 +66,14 @@ RSpec.describe "Emoji Fluff", system: true do
     visit("/t/#{topic_1.id}")
 
     find(".post-controls .reply").click
-    first(".insert-emoji").click
-    expect(page).to have_css(".emoji-picker.opened .fluff-toggle-switch")
+    first(".insert-composer-emoji").click
+    expect(page).to have_css(".emoji-picker .fluff-toggle-switch")
 
-    find(".emoji-picker.opened .fluff-toggle-switch").click
-    first(".emoji-picker.opened .emojis-container .emoji[title='smile'").click
+    find(".emoji-picker .fluff-toggle-switch").click
+    first(".emoji-picker .emoji[data-emoji='smile']").click
 
     expect(page).to have_css("[data-identifier='fluff-selector-dropdown']")
     first("[data-identifier='fluff-selector-dropdown'] .fluff").click
-    expect(page).to have_css("[data-identifier='fluff-selector-dropdown']")
 
     expect(find(".d-editor .d-editor-input").value).to eq(":smile:f-flip:")
     expect(composer.preview).to have_css(".fluff.fluff--flip img.emoji")

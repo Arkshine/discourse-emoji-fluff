@@ -1,28 +1,7 @@
 import { action } from "@ember/object";
 import { service } from "@ember/service";
-import { isEmpty } from "@ember/utils";
 import FluffSelector from "../components/fluff-selector";
 import { FLUFF_EMOJI_PICKER_ID, FLUFF_PREFIX } from "./constants";
-
-function emojiSelectedWitFluff(code, fluff) {
-  let selected = this.getSelected();
-  const captures = selected.pre.match(/\B:(\w*)$/);
-
-  if (isEmpty(captures)) {
-    if (selected.pre.match(/\S$/)) {
-      this.addText(selected, ` :${code}:${FLUFF_PREFIX}${fluff}:`);
-    } else {
-      this.addText(selected, `:${code}:${FLUFF_PREFIX}${fluff}:`);
-    }
-  } else {
-    let numOfRemovedChars = captures[1].length;
-    this._insertAt(
-      selected.start - numOfRemovedChars,
-      selected.end,
-      `${code}:${FLUFF_PREFIX}${fluff}:`
-    );
-  }
-}
 
 export function handleEmojiPicker(Superclass) {
   return class extends Superclass {
@@ -31,27 +10,21 @@ export function handleEmojiPicker(Superclass) {
     @service tooltip;
     @service site;
 
-    @action
-    onClose(event) {
-      if (!this.fluffPresence.isPresent) {
-        return super.onClose(event);
-      }
-
-      if (
-        this.fluffEmojiPicker.enabled &&
-        this.fluffEmojiPicker.selectedEmoji &&
-        !this.site.isMobileDevice
-      ) {
-        // Prevents the emoji picker from closing when clicking inside the tooltip.
-        return false;
-      }
-
+    willDestroy() {
+      this.tooltip.close(FLUFF_EMOJI_PICKER_ID);
       this.fluffEmojiPicker.clear();
-      super.onClose(event);
+      super.willDestroy();
     }
 
     @action
-    onEmojiSelection(event) {
+    async didSelectEmoji(event) {
+      if (
+        !event.target.classList.contains("emoji") ||
+        !(event.type === "click" || event.key === "Enter")
+      ) {
+        return super.didSelectEmoji(event);
+      }
+
       if (
         !this.fluffPresence.isPresent ||
         !this.fluffEmojiPicker.enabled ||
@@ -67,21 +40,23 @@ export function handleEmojiPicker(Superclass) {
           this.fluffEmojiPicker.selectedEmoji = "";
           this.fluffEmojiPicker.selectedTarget = null;
         } else {
-          return super.onEmojiSelection(event);
+          return super.didSelectEmoji(event);
         }
       }
 
-      const img = event.target;
+      event.preventDefault();
+      event.stopPropagation();
 
-      if (!img.classList.contains("emoji") || img.tagName !== "IMG") {
-        return false;
+      let emoji = event.target.dataset.emoji;
+      const tonable = event.target.dataset.tonable;
+      const diversity = this.emojiStore.diversity;
+
+      if (tonable && diversity > 1) {
+        emoji = `${emoji}:t${diversity}`;
       }
 
       if (!this.fluffEmojiPicker.selectedEmoji) {
-        let code = event.target.title;
-        code = this._codeWithDiversity(code, this.selectedDiversity);
-
-        this.fluffEmojiPicker.selectedEmoji = code;
+        this.fluffEmojiPicker.selectedEmoji = emoji;
         this.fluffEmojiPicker.selectedTarget = event.target;
 
         this.tooltip.show(event.target, {
@@ -92,27 +67,19 @@ export function handleEmojiPicker(Superclass) {
             this.fluffEmojiPicker.selectedTarget = null;
           },
           data: {
-            code,
+            code: emoji,
             context: "emoji-picker",
           },
         });
       } else {
-        emojiSelectedWitFluff.call(
-          this.parentView.textManipulation,
-          this.fluffEmojiPicker.selectedEmoji,
-          this.fluffEmojiPicker.selectedFluff
+        this.emojiStore.trackEmojiForContext(emoji, this.args.context);
+
+        this.args.didSelectEmoji?.(
+          `${emoji}:${FLUFF_PREFIX}${this.fluffEmojiPicker.selectedFluff}`
         );
 
-        this._trackEmojiUsage(this.fluffEmojiPicker.selectedEmoji, {
-          refresh: !img.parentNode.parentNode.classList.contains("recent"),
-        });
-
-        if (this.site.isMobileDevice) {
-          this.onClose(event);
-        }
+        await this.args.close?.();
       }
-
-      return false;
     }
   };
 }

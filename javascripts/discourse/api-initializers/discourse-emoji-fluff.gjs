@@ -1,7 +1,7 @@
 import { setOwner } from "@ember/owner";
 import { service } from "@ember/service";
 import { withPluginApi } from "discourse/lib/plugin-api";
-import FluffEmojiPickerFooter from "../components/fluff-emoji-picker-footer";
+import FluffEmojiPickerFilterContainer from "../components/fluff-emoji-picker-filter-container";
 import {
   handleAutocomplete,
   registerAutocompleteEvents,
@@ -20,20 +20,18 @@ class EmojiFluffInit {
   @service siteSettings;
   @service fluffPresence;
 
-  constructor(owner) {
+  constructor(owner, api) {
     setOwner(this, owner);
 
-    // 2024-10-30 - API 1.38.0
-    // 2024-10-24 - Allow parent method to be called using `super.` in `modifyClass`
-    withPluginApi("1.38.0", (api) => {
-      if (
-        !settings.allowed_decorations.length ||
-        !this.siteSettings.enable_emoji
-      ) {
-        return;
-      }
+    if (
+      !settings.allowed_decorations.length ||
+      !this.siteSettings.enable_emoji
+    ) {
+      return;
+    }
 
-      api.decorateCookedElement(
+    if (api.decorateChatMessage) {
+      api.decorateChatMessage(
         (element) => {
           if (settings.enabled) {
             renderFluff(element);
@@ -42,29 +40,46 @@ class EmojiFluffInit {
             removeFluff(element);
           }
         },
-        { afterAdopt: true }
+        {
+          id: "fluff-emoji",
+        }
       );
+    }
 
-      this.updatePresence();
+    api.decorateCookedElement(
+      (element) => {
+        if (settings.enabled) {
+          renderFluff(element);
+          applyEmojiOnlyClass(element);
+        } else {
+          removeFluff(element);
+        }
+      },
+      { afterAdopt: true }
+    );
 
-      if (!settings.enabled) {
-        return;
+    this.updatePresence();
+
+    if (!settings.enabled) {
+      return;
+    }
+
+    if (this.allowSelectorInAutocomplete || this.allowSelectorInEmojiPicker) {
+      if (this.allowSelectorInAutocomplete) {
+        api.modifyClass("component:d-editor", handleAutocomplete);
+        registerAutocompleteEvents();
       }
 
-      if (this.allowSelectorInAutocomplete || this.allowSelectorInEmojiPicker) {
-        if (this.allowSelectorInAutocomplete) {
-          api.modifyClass("component:d-editor", handleAutocomplete);
-          registerAutocompleteEvents();
-        }
-
-        if (this.allowSelectorInEmojiPicker) {
-          api.modifyClass("component:emoji-picker", handleEmojiPicker);
-          api.renderInOutlet("emoji-picker-footer", FluffEmojiPickerFooter);
-        }
+      if (this.allowSelectorInEmojiPicker) {
+        api.modifyClass("component:emoji-picker/content", handleEmojiPicker);
+        api.renderAfterWrapperOutlet(
+          "emoji-picker-filter-container",
+          FluffEmojiPickerFilterContainer
+        );
       }
+    }
 
-      this.updateCSSProperty();
-    });
+    this.updateCSSProperty();
   }
 
   updatePresence() {
@@ -112,7 +127,9 @@ export default {
   name: "discourse-emoji-fluff",
 
   initialize(owner) {
-    this.instance = new EmojiFluffInit(owner);
+    withPluginApi((api) => {
+      this.instance = new EmojiFluffInit(owner, api);
+    });
   },
 
   tearDown() {
