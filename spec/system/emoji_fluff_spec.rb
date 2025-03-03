@@ -67,16 +67,15 @@ RSpec.describe "Emoji Fluff", system: true do
 
     find(".post-controls .reply").click
     first(".insert-composer-emoji").click
-    expect(page).to have_css(".emoji-picker")
     expect(page).to have_css(".emoji-picker .fluff-toggle-switch")
 
     find(".emoji-picker .fluff-toggle-switch").click
-    find('.emoji-picker .emoji-picker__section-emojis img.emoji[src*="grinning"]').click
+    first(".emoji-picker .emoji[data-emoji='rolling_on_the_floor_laughing']").click
 
     expect(page).to have_css("[data-identifier='fluff-selector-dropdown']")
     first("[data-identifier='fluff-selector-dropdown'] .fluff").click
 
-    expect(find(".d-editor .d-editor-input").value).to eq(":grinning:f-flip:")
+    expect(find(".d-editor .d-editor-input").value).to eq(":rolling_on_the_floor_laughing:f-flip:")
     expect(composer.preview).to have_css(".fluff.fluff--flip img.emoji")
   end
 end
