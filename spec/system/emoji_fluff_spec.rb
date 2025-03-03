@@ -48,7 +48,7 @@ RSpec.describe "Emoji Fluff", system: true do
     visit("/t/#{topic_1.id}")
 
     find(".post-controls .reply").click
-    composer.fill_content(":smile")
+    composer.fill_content(":zzz")
     expect(page).to have_css(".autocomplete.with-fluff .btn-fluff-selector")
 
     first(".autocomplete.with-fluff .btn-fluff-selector").click
@@ -57,7 +57,7 @@ RSpec.describe "Emoji Fluff", system: true do
 
     first(".fluff-selector-dropdown-content .fluff").click
 
-    expect(find(".d-editor .d-editor-input").value).to eq(":smile:f-flip: ")
+    expect(find(".d-editor .d-editor-input").value).to eq(":zzz:f-flip: ")
     expect(composer.preview).to have_css(".fluff.fluff--flip img.emoji")
     expect(page).to have_no_css("[data-identifier='fluff-selector-dropdown']")
   end
@@ -70,12 +70,12 @@ RSpec.describe "Emoji Fluff", system: true do
     expect(page).to have_css(".emoji-picker .fluff-toggle-switch")
 
     find(".emoji-picker .fluff-toggle-switch").click
-    first(".emoji-picker .emoji[data-emoji='smile']").click
+    first(".emoji-picker .emoji[data-emoji='rolling_on_the_floor_laughing']").click
 
     expect(page).to have_css("[data-identifier='fluff-selector-dropdown']")
     first("[data-identifier='fluff-selector-dropdown'] .fluff").click
 
-    expect(find(".d-editor .d-editor-input").value).to eq(":smile:f-flip:")
+    expect(find(".d-editor .d-editor-input").value).to eq(":rolling_on_the_floor_laughing:f-flip:")
     expect(composer.preview).to have_css(".fluff.fluff--flip img.emoji")
   end
 end

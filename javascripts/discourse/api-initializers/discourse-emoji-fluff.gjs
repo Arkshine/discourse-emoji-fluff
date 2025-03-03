@@ -4,6 +4,7 @@ import { withPluginApi } from "discourse/lib/plugin-api";
 import FluffEmojiPickerFilterContainer from "../components/fluff-emoji-picker-filter-container";
 import {
   handleAutocomplete,
+  handleChatAutocomplete,
   registerAutocompleteEvents,
   teardownAutocompleteEvents,
 } from "../lib/autocomplete";
@@ -31,6 +32,7 @@ class EmojiFluffInit {
     }
 
     if (api.decorateChatMessage) {
+      api.modifyClass("component:chat-composer", handleChatAutocomplete);
       api.decorateChatMessage(
         (element) => {
           if (settings.enabled) {
