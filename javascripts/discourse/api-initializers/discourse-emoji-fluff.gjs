@@ -32,7 +32,7 @@ class EmojiFluffInit {
     }
 
     if (api.decorateChatMessage) {
-      api.modifyClass("component:chat-composer", handleChatAutocomplete);
+      //api.modifyClass("component:chat-composer", handleChatAutocomplete);
       api.decorateChatMessage(
         (element) => {
           if (settings.enabled) {
@@ -68,8 +68,8 @@ class EmojiFluffInit {
 
     if (this.allowSelectorInAutocomplete || this.allowSelectorInEmojiPicker) {
       if (this.allowSelectorInAutocomplete) {
-        api.modifyClass("component:d-editor", handleAutocomplete);
-        registerAutocompleteEvents();
+        //api.modifyClass("component:d-editor", handleAutocomplete);
+        //registerAutocompleteEvents();
       }
 
       if (this.allowSelectorInEmojiPicker) {
