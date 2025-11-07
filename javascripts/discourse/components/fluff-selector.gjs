@@ -23,7 +23,7 @@ export default class FluffSelector extends Component {
 
   get itemElement() {
     return document.querySelector(
-      `.autocomplete.with-fluff [data-code="${this.data.code}"]`
+      `.autocomplete.with-fluff [data-code="${this.data.code}"] a`
     );
   }
 
@@ -69,7 +69,9 @@ export default class FluffSelector extends Component {
       this.data.fluff = decoration;
       this.tooltip.close(FLUFF_EMOJI_PICKER_ID);
 
-      element.dispatchEvent(new CustomEvent("click"));
+      element.dispatchEvent(
+        new CustomEvent("click", { bubbles: true, cancelable: true })
+      );
     }
   }
 

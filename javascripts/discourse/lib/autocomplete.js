@@ -1,15 +1,19 @@
-import { action } from "@ember/object";
+import { getOwner } from "@ember/owner";
 import { schedule } from "@ember/runloop";
 import { service } from "@ember/service";
-import $ from "jquery";
 import { emojiSearch, isSkinTonableEmoji } from "pretty-text/emoji";
 import { translations } from "pretty-text/emoji/data";
 import EmojiPickerDetached from "discourse/components/emoji-picker/detached";
 import { SKIP } from "discourse/lib/autocomplete";
+import renderEmojiAutocomplete from "discourse/lib/autocomplete/emoji";
+import loadEmojiSearchAliases from "discourse/lib/load-emoji-search-aliases";
 import { emojiUrlFor } from "discourse/lib/text";
+import { TextareaAutocompleteHandler } from "discourse/lib/textarea-text-manipulation";
 import virtualElementFromTextRange from "discourse/lib/virtual-element-from-text-range";
 import { waitForClosedKeyboard } from "discourse/lib/wait-for-keyboard";
 import { i18n } from "discourse-i18n";
+import FluffRenderEmojiAutocomplete from "../components/fluff-render-emoji-autocomplete";
+import DAutocompleteModifierOverwrite from "../modifiers/d-autocomplete-overwrite";
 import { FLUFF_EMOJI_PICKER_ID, FLUFF_PREFIX } from "./constants";
 
 function onItemMouseover(li, event) {
@@ -61,17 +65,23 @@ export function teardownAutocompleteEvents() {
   window.removeEventListener("click", clickOutsideIntercept);
 }
 
-function emojiAutocomplete($textarea) {
-  const chatContext = this.composerId === "channel-composer";
-  const textManipulationOrTextarea = chatContext
-    ? $textarea
-    : this.textManipulation;
+function overwriteChatEmojiAutocomplete(
+  textarea,
+  autocompleteHandler,
+  options
+) {
+  options = {
+    ...options,
+    component: FluffRenderEmojiAutocomplete, // Fluff component
+    afterComplete: (text, event) => {
+      event.preventDefault();
+      this.composer.textarea.value = text;
+      this.composer.focus();
 
-  textManipulationOrTextarea.autocomplete({
-    template: findRawTemplate("fluff-selector-autocomplete"),
-    key: ":",
-    treatAsTextarea: chatContext,
-
+      document.querySelectorAll(".autocomplete.with-fluff li").forEach((li) => {
+        li.addEventListener("mouseover", onItemMouseover.bind(this, li));
+      });
+    },
     onRender: () => {
       if (!this.site.mobileView) {
         schedule("afterRender", () => {
@@ -83,19 +93,59 @@ function emojiAutocomplete($textarea) {
         });
       }
     },
-
-    afterComplete: (text, event) => {
-      if (chatContext) {
-        event.preventDefault();
-        this.composer.textarea.value = text;
-        this.composer.focus();
+    transformComplete: async (v) => {
+      if (v.code) {
+        let code = `${v.code}:`;
+        if (v.fluff) {
+          code += `${FLUFF_PREFIX}${v.fluff}:`; // fluff
+        }
+        return code;
       } else {
-        schedule(
-          "afterRender",
-          this.textManipulation,
-          this.textManipulation.blurAndFocus
-        );
+        const menuOptions = {
+          identifier: "emoji-picker",
+          groupIdentifier: "emoji-picker",
+          component: EmojiPickerDetached,
+          context: "chat",
+          modalForMobile: true,
+          data: {
+            didSelectEmoji: (emoji) => {
+              this.onSelectEmoji(emoji);
+            },
+            term: v.term,
+            context: "chat",
+          },
+        };
+
+        // Close the keyboard before showing the emoji picker
+        // it avoids a whole range of bugs on iOS
+        await waitForClosedKeyboard(this);
+
+        const virtualElement = virtualElementFromTextRange();
+        this.menuInstance = await this.menu.show(virtualElement, menuOptions);
+        return "";
       }
+    },
+  };
+
+  return DAutocompleteModifierOverwrite.setupAutocompleteFluff(
+    getOwner(this),
+    textarea,
+    autocompleteHandler,
+    options
+  );
+}
+
+function overwriteEmojiAutocomplete() {
+  const options = {
+    template: renderEmojiAutocomplete,
+    component: FluffRenderEmojiAutocomplete, // Fluff component
+    key: ":",
+    afterComplete: () => {
+      schedule(
+        "afterRender",
+        this.textManipulation,
+        this.textManipulation.blurAndFocus
+      );
 
       if (!this.site.mobileView) {
         document
@@ -103,6 +153,18 @@ function emojiAutocomplete($textarea) {
           .forEach((li) => {
             li.removeEventListener("mouseover", onItemMouseover.bind(this, li));
           });
+      }
+    },
+
+    onRender: () => {
+      if (!this.site.mobileView) {
+        schedule("afterRender", () => {
+          document
+            .querySelectorAll(".autocomplete.with-fluff li")
+            .forEach((li) => {
+              li.addEventListener("mouseover", onItemMouseover.bind(this, li));
+            });
+        });
       }
     },
 
@@ -117,16 +179,16 @@ function emojiAutocomplete($textarea) {
       }
     },
 
-    transformComplete: async (v, event) => {
+    transformComplete: async (v) => {
       if (v.code) {
         this.emojiStore.trackEmojiForContext(v.code, "topic");
         let code = `${v.code}:`;
         if (v.fluff) {
-          code += `${FLUFF_PREFIX}${v.fluff}:`;
+          code += `${FLUFF_PREFIX}${v.fluff}:`; // fluff
         }
         return code;
       } else {
-        textManipulationOrTextarea.autocomplete({ cancel: true });
+        this.textManipulation.autocomplete({ cancel: true });
 
         const menuOptions = {
           identifier: "emoji-picker",
@@ -134,34 +196,32 @@ function emojiAutocomplete($textarea) {
           modalForMobile: true,
           data: {
             didSelectEmoji: (emoji) => {
-              if (chatContext) {
-                this.onSelectEmoji(emoji);
-              } else {
-                this.textManipulation.emojiSelected(emoji);
-              }
+              this.textManipulation.emojiSelected(emoji);
             },
             term: v.term,
           },
         };
 
-        let virtualElement;
-        if (chatContext) {
-          // Close the keyboard before showing the emoji picker
-          // it avoids a whole range of bugs on iOS
-          await waitForClosedKeyboard(this);
-          virtualElement = virtualElementFromTextRange();
-        } else {
-          if (event instanceof KeyboardEvent) {
-            // when user selects more by pressing enter
-            virtualElement = virtualElementFromTextRange();
-          } else {
-            // when user selects more by clicking on it
-            // using textarea as a fallback as it's hard to have a good position
-            // given the autocomplete menu will be gone by the time we are here
-            virtualElement = this.textManipulation.textarea;
-          }
-        }
+        const caretCoords =
+          this.textManipulation.autocompleteHandler.getCaretCoords(
+            this.textManipulation.autocompleteHandler.getCaretPosition()
+          );
 
+        const rect = document
+          .querySelector(".d-editor-input")
+          .getBoundingClientRect();
+
+        const marginLeft = 18;
+        const marginTop = 10;
+
+        const virtualElement = {
+          getBoundingClientRect: () => ({
+            left: rect.left + caretCoords.left + marginLeft,
+            top: rect.top + caretCoords.top + marginTop,
+            width: 0,
+            height: 0,
+          }),
+        };
         this.menuInstance = this.menu.show(virtualElement, menuOptions);
         return "";
       }
@@ -172,36 +232,12 @@ function emojiAutocomplete($textarea) {
         const full = `:${term}`;
         term = term.toLowerCase();
 
-        if (chatContext) {
-          // We need to avoid quick emoji autocomplete cause it can interfere with quick
-          // typing, set minimal length to 2
-          let minLength = Math.max(
-            this.siteSettings.emoji_autocomplete_min_chars,
-            2
-          );
-
-          if (term.length < minLength) {
-            return resolve(SKIP);
-          }
-
-          // bypass :-p and other common typed smileys
-          if (
-            !term.match(
-              /[^-\{\}\[\]\(\)\*_\<\>\\\/].*[^-\{\}\[\]\(\)\*_\<\>\\\/]/
-            )
-          ) {
-            return resolve(SKIP);
-          }
-        } else {
-          if (term.length < this.siteSettings.emoji_autocomplete_min_chars) {
-            return resolve(SKIP);
-          }
+        if (term.length < this.siteSettings.emoji_autocomplete_min_chars) {
+          return resolve(SKIP);
         }
 
         if (term === "") {
-          const favorites = this.emojiStore.favoritesForContext(
-            chatContext ? "chat" : "topic"
-          );
+          const favorites = this.emojiStore.favoritesForContext("topic");
           if (favorites.length) {
             return resolve(
               favorites
@@ -215,7 +251,8 @@ function emojiAutocomplete($textarea) {
 
         // note this will only work for emojis starting with :
         // eg: :-)
-        const emojiTranslation = this.site.custom_emoji_translation || {};
+        const emojiTranslation =
+          this.get("site.custom_emoji_translation") || {};
         const allTranslations = Object.assign(
           {},
           translations,
@@ -225,7 +262,7 @@ function emojiAutocomplete($textarea) {
           return resolve([allTranslations[full]]);
         }
 
-        const emojiDenied = this.site.denied_emojis || [];
+        const emojiDenied = this.get("site.denied_emojis") || [];
         const match = term.match(/^:?(.*?):t([2-6])?$/);
         if (match) {
           const name = match[1];
@@ -240,20 +277,25 @@ function emojiAutocomplete($textarea) {
           }
         }
 
-        const options = emojiSearch(term, {
-          maxResults: 5,
-          diversity: this.emojiStore.diversity,
-          exclude: emojiDenied,
+        loadEmojiSearchAliases().then((searchAliases) => {
+          resolve(
+            emojiSearch(term, {
+              maxResults: 5,
+              diversity: this.emojiStore.diversity,
+              exclude: emojiDenied,
+              searchAliases,
+            })
+          );
         });
-
-        return resolve(options);
       })
         .then((list) => {
           if (list === SKIP) {
             return [];
           }
 
-          return list.map((code) => ({ code, src: emojiUrlFor(code) }));
+          return list.map((code) => {
+            return { code, src: emojiUrlFor(code) };
+          });
         })
         .then((list) => {
           if (list.length) {
@@ -263,8 +305,16 @@ function emojiAutocomplete($textarea) {
         });
     },
 
-    triggerRule: async () => !(await this.textManipulation?.inCodeBlock()),
-  });
+    triggerRule: async () => !(await this.textManipulation.inCodeBlock()),
+  };
+
+  // textManipulation.autocomplete()
+  return DAutocompleteModifierOverwrite.setupAutocompleteFluff(
+    getOwner(this),
+    this.textManipulation.view?.dom ?? this.textManipulation.textarea,
+    this.textManipulation.autocompleteHandler,
+    options
+  );
 }
 
 export function handleChatAutocomplete(Superclass) {
@@ -273,17 +323,18 @@ export function handleChatAutocomplete(Superclass) {
     @service fluffEmojiAutocomplete;
     @service fluffPresence;
 
-    @action
-    setupAutocomplete(textarea) {
-      if (!this.siteSettings.enable_emoji || !this.fluffPresence.isPresent) {
-        return super.setupAutocomplete(textarea);
+    applyAutocomplete(textarea, options) {
+      if (!this.fluffPresence.isPresent) {
+        return super.applyAutocomplete(textarea, options);
       }
 
-      this.siteSettings.enable_emoji = false;
-      super.setupAutocomplete(textarea);
-      this.siteSettings.enable_emoji = true;
-
-      emojiAutocomplete.call(this, $(textarea));
+      const autocompleteHandler = new TextareaAutocompleteHandler(textarea);
+      return overwriteChatEmojiAutocomplete.call(
+        this,
+        textarea,
+        autocompleteHandler,
+        options
+      );
     }
   };
 }
@@ -299,7 +350,7 @@ export function handleAutocomplete(Superclass) {
         return super._applyEmojiAutocomplete();
       }
 
-      emojiAutocomplete.call(this);
+      overwriteEmojiAutocomplete.call(this);
     }
   };
 }

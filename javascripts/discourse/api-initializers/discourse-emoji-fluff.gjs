@@ -3,9 +3,9 @@ import { service } from "@ember/service";
 import { withPluginApi } from "discourse/lib/plugin-api";
 import FluffEmojiPickerFilterContainer from "../components/fluff-emoji-picker-filter-container";
 import {
-  //handleAutocomplete,
-  //handleChatAutocomplete,
-  //registerAutocompleteEvents,
+  handleAutocomplete,
+  handleChatAutocomplete,
+  registerAutocompleteEvents,
   teardownAutocompleteEvents,
 } from "../lib/autocomplete";
 import { handleEmojiPicker } from "../lib/emoji-picker";
@@ -32,7 +32,7 @@ class EmojiFluffInit {
     }
 
     if (api.decorateChatMessage) {
-      //api.modifyClass("component:chat-composer", handleChatAutocomplete);
+      api.modifyClass("component:chat-composer", handleChatAutocomplete);
       api.decorateChatMessage(
         (element) => {
           if (settings.enabled) {
@@ -68,8 +68,8 @@ class EmojiFluffInit {
 
     if (this.allowSelectorInAutocomplete || this.allowSelectorInEmojiPicker) {
       if (this.allowSelectorInAutocomplete) {
-        //api.modifyClass("component:d-editor", handleAutocomplete);
-        //registerAutocompleteEvents();
+        api.modifyClass("component:d-editor", handleAutocomplete);
+        registerAutocompleteEvents();
       }
 
       if (this.allowSelectorInEmojiPicker) {

@@ -70,12 +70,12 @@ RSpec.describe "Emoji Fluff", system: true do
     expect(page).to have_css(".emoji-picker .fluff-toggle-switch")
 
     find(".emoji-picker .fluff-toggle-switch").click
-    first(".emoji-picker .emoji[data-emoji='rolling_on_the_floor_laughing']").click
+    first(".emoji-picker .emoji[data-emoji='rofl']").click
 
     expect(page).to have_css("[data-identifier='fluff-selector-dropdown']")
     first("[data-identifier='fluff-selector-dropdown'] .fluff").click
 
-    expect(find(".d-editor .d-editor-input").value).to eq(":rolling_on_the_floor_laughing:f-flip:")
+    expect(find(".d-editor .d-editor-input").value).to eq(":rofl:f-flip:")
     expect(composer.preview).to have_css(".fluff.fluff--flip img.emoji")
   end
 end

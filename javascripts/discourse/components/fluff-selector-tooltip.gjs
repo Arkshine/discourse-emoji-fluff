@@ -3,9 +3,9 @@ import { action } from "@ember/object";
 import { schedule } from "@ember/runloop";
 import { service } from "@ember/service";
 import { modifier } from "ember-modifier";
-import DTooltip from "discourse/components/d-tooltip";
 import dIcon from "discourse/helpers/d-icon";
 import { bind } from "discourse/lib/decorators";
+import DTooltip from "float-kit/components/d-tooltip";
 import { FLUFF_EMOJI_PICKER_ID } from "../lib/constants";
 import FluffSelector from "./fluff-selector";
 
@@ -33,12 +33,6 @@ export default class FluffSelectorTooltip extends Component {
 
   get identifier() {
     return FLUFF_EMOJI_PICKER_ID;
-  }
-
-  get itemElement() {
-    return document.querySelector(
-      `.autocomplete.with-fluff [data-code="${this.option.code}"]`
-    );
   }
 
   get triggers() {
