@@ -1,19 +1,19 @@
-import { getOwner } from "@ember/owner";
 import { schedule } from "@ember/runloop";
 import { service } from "@ember/service";
 import { emojiSearch, isSkinTonableEmoji } from "pretty-text/emoji";
 import { translations } from "pretty-text/emoji/data";
 import EmojiPickerDetached from "discourse/components/emoji-picker/detached";
-import { SKIP } from "discourse/lib/autocomplete";
 import renderEmojiAutocomplete from "discourse/lib/autocomplete/emoji";
 import loadEmojiSearchAliases from "discourse/lib/load-emoji-search-aliases";
 import { emojiUrlFor } from "discourse/lib/text";
-import { TextareaAutocompleteHandler } from "discourse/lib/textarea-text-manipulation";
 import virtualElementFromTextRange from "discourse/lib/virtual-element-from-text-range";
 import { waitForClosedKeyboard } from "discourse/lib/wait-for-keyboard";
+import {
+  EMOJI_ALLOWED_PRECEDING_CHARS_REGEXP,
+  SKIP,
+} from "discourse/modifiers/d-autocomplete";
 import { i18n } from "discourse-i18n";
 import FluffRenderEmojiAutocomplete from "../components/fluff-render-emoji-autocomplete";
-import DAutocompleteModifierOverwrite from "../modifiers/d-autocomplete-overwrite";
 import { FLUFF_EMOJI_PICKER_ID, FLUFF_PREFIX } from "./constants";
 
 function onItemMouseover(li, event) {
@@ -65,11 +65,7 @@ export function teardownAutocompleteEvents() {
   window.removeEventListener("click", clickOutsideIntercept);
 }
 
-function overwriteChatEmojiAutocomplete(
-  textarea,
-  autocompleteHandler,
-  options
-) {
+function overwriteChatEmojiAutocomplete(options) {
   options = {
     ...options,
     component: FluffRenderEmojiAutocomplete, // Fluff component
@@ -127,12 +123,7 @@ function overwriteChatEmojiAutocomplete(
     },
   };
 
-  return DAutocompleteModifierOverwrite.setupAutocompleteFluff(
-    getOwner(this),
-    textarea,
-    autocompleteHandler,
-    options
-  );
+  return options;
 }
 
 function overwriteEmojiAutocomplete() {
@@ -169,10 +160,10 @@ function overwriteEmojiAutocomplete() {
     },
 
     onKeyUp: (text, cp) => {
-      const matches =
-        /(?:^|[\s.\?,@\/#!%&*;:\[\]{}=\-_()])(:(?!:).?[\w-]*:?(?!:)(?:t\d?)?:?) ?$/gi.exec(
-          text.substring(0, cp)
-        );
+      const matches = new RegExp(
+        `(?:^|${EMOJI_ALLOWED_PRECEDING_CHARS_REGEXP.source})(:(?!:).?[\\w-]*:?(?!:)(?:t\\d?)?:?) ?$`,
+        "gi"
+      ).exec(text.substring(0, cp));
 
       if (matches && matches[1]) {
         return [matches[1]];
@@ -308,13 +299,7 @@ function overwriteEmojiAutocomplete() {
     triggerRule: async () => !(await this.textManipulation.inCodeBlock()),
   };
 
-  // textManipulation.autocomplete()
-  return DAutocompleteModifierOverwrite.setupAutocompleteFluff(
-    getOwner(this),
-    this.textManipulation.view?.dom ?? this.textManipulation.textarea,
-    this.textManipulation.autocompleteHandler,
-    options
-  );
+  this.textManipulation.autocomplete(options);
 }
 
 export function handleChatAutocomplete(Superclass) {
@@ -328,13 +313,8 @@ export function handleChatAutocomplete(Superclass) {
         return super.applyAutocomplete(textarea, options);
       }
 
-      const autocompleteHandler = new TextareaAutocompleteHandler(textarea);
-      return overwriteChatEmojiAutocomplete.call(
-        this,
-        textarea,
-        autocompleteHandler,
-        options
-      );
+      const newOptions = overwriteChatEmojiAutocomplete.call(this, options);
+      return super.applyAutocomplete(textarea, newOptions);
     }
   };
 }

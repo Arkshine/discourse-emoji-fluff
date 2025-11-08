@@ -21,12 +21,6 @@ export default class FluffSelector extends Component {
     return this.data?.context === "emoji-picker";
   }
 
-  get itemElement() {
-    return document.querySelector(
-      `.autocomplete.with-fluff [data-code="${this.data.code}"] a`
-    );
-  }
-
   @action
   click(event) {
     if (!this.site.mobileView) {
@@ -49,7 +43,7 @@ export default class FluffSelector extends Component {
   }
 
   @action
-  selectFluff(decoration) {
+  selectFluff(decoration, _, event) {
     if (this.isEmojiPickerContext) {
       this.fluffEmojiPicker.selectedFluff = decoration;
       this.fluffEmojiPicker.selectedTarget?.dispatchEvent(
@@ -63,40 +57,43 @@ export default class FluffSelector extends Component {
       return;
     }
 
-    const element = this.itemElement;
+    const index = Array.from(
+      document.querySelectorAll(".autocomplete.with-fluff li")
+    ).findIndex((el) => el.dataset.code === this.data.code);
 
-    if (element) {
+    if (index >= 0) {
       this.data.fluff = decoration;
       this.tooltip.close(FLUFF_EMOJI_PICKER_ID);
-
-      element.dispatchEvent(
-        new CustomEvent("click", { bubbles: true, cancelable: true })
-      );
+      this.onSelect(this.data, index, event);
     }
   }
 
   <template>
-    {{#each this.allowedDecorations as |decoration|}}
-      <DButton
-        @translatedTitle={{decoration}}
-        @action={{fn this.selectFluff decoration}}
-        class="btn-transparent btn-fluff-container"
-        {{on "mouseover" (fn this.onMouseHover decoration)}}
-        {{on "mouseout" (fn this.onMouseOut decoration)}}
-      >
-        <div class={{concatClass "fluff" (concat "fluff--" decoration)}}>
-          {{#if @data.src}}
-            <img
-              src={{@data.src}}
-              class={{concatClass "emoji"}}
-              title={{decoration}}
-            />
-          {{else}}
-            {{replaceEmoji (concat ":" @data.code ":") title=decoration}}
-          {{/if}}
-        </div>
-      </DButton>
+    <div class="fluff-selector-keyboard-container">
+      {{#each this.allowedDecorations as |decoration|}}
+        <DButton
+          @translatedTitle={{decoration}}
+          @action={{fn this.selectFluff decoration}}
+          @forwardEvent={{true}}
+          class="btn-transparent btn-fluff-container"
+          {{on "mouseover" (fn this.onMouseHover decoration)}}
+          {{on "mouseout" (fn this.onMouseOut decoration)}}
+          tabindex="0"
+        >
+          <div class={{concatClass "fluff" (concat "fluff--" decoration)}}>
+            {{#if @data.src}}
+              <img
+                src={{@data.src}}
+                class={{concatClass "emoji"}}
+                title={{decoration}}
+              />
+            {{else}}
+              {{replaceEmoji (concat ":" @data.code ":") title=decoration}}
+            {{/if}}
+          </div>
+        </DButton>
 
-    {{/each}}
+      {{/each}}
+    </div>
   </template>
 }

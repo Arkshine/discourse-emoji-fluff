@@ -1,9 +1,9 @@
-export function closestSquareGrid(elements) {
-  const dimension = Math.ceil(Math.sqrt(elements));
+export function closestSquareGrid(count) {
+  const dimension = Math.ceil(Math.sqrt(count));
   let rows = dimension;
   let columns = dimension;
 
-  while (rows * columns < elements.length) {
+  while (rows * columns < count) {
     if (rows <= columns) {
       rows++;
     } else {

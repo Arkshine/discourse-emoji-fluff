@@ -48,7 +48,9 @@ RSpec.describe "Emoji Fluff", system: true do
     visit("/t/#{topic_1.id}")
 
     find(".post-controls .reply").click
-    composer.fill_content(":zzz")
+    composer.focus
+    composer.type_content(":zzz")
+
     expect(page).to have_css(".autocomplete.with-fluff .btn-fluff-selector")
 
     first(".autocomplete.with-fluff .btn-fluff-selector").click

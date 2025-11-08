@@ -77,7 +77,12 @@ export default class FluffSelectorTooltip extends Component {
           {{dIcon "wand-magic-sparkles"}}
         </:trigger>
         <:content>
-          <FluffSelector @data={{@option}} />
+          <FluffSelector
+            @data={{@option}}
+            @selectedIndex={{@selectedIndex}}
+            @onSelect={{@onSelect}}
+            @onRender={{@onRender}}
+          />
         </:content>
       </DTooltip>
     {{/if}}
