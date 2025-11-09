@@ -14,6 +14,7 @@ import {
   removeFluff,
   renderFluff,
 } from "../lib/render-fluff";
+import emojiFluffExtension from "../lib/rich-editor-extension";
 import { closestSquareGrid } from "../lib/utils";
 
 class EmojiFluffInit {
@@ -67,6 +68,8 @@ class EmojiFluffInit {
     }
 
     if (this.allowSelectorInAutocomplete || this.allowSelectorInEmojiPicker) {
+      api.registerRichEditorExtension(emojiFluffExtension);
+
       if (this.allowSelectorInAutocomplete) {
         api.modifyClass("component:d-editor", handleAutocomplete);
         registerAutocompleteEvents();

@@ -11,6 +11,7 @@ import FluffSelector from "./fluff-selector";
 
 export default class FluffSelectorTooltip extends Component {
   @service fluffEmojiAutocomplete;
+  @service fluffAutocompleteKeyboardNavigator;
   @service site;
   @service tooltip;
 
@@ -36,7 +37,7 @@ export default class FluffSelectorTooltip extends Component {
   }
 
   get triggers() {
-    return { mobile: ["click"], desktop: ["hover"] };
+    return { mobile: ["click"], desktop: ["click", "hover"] };
   }
 
   get untriggers() {
@@ -52,11 +53,15 @@ export default class FluffSelectorTooltip extends Component {
   @action
   onShow() {
     this.fluffEmojiAutocomplete.opened = true;
+    this.fluffAutocompleteKeyboardNavigator.setCloseCallback(() =>
+      this.tooltip.close(FLUFF_EMOJI_PICKER_ID)
+    );
   }
 
   @action
   onClose() {
     this.fluffEmojiAutocomplete.opened = false;
+    this.fluffAutocompleteKeyboardNavigator.setCloseCallback(null);
   }
 
   <template>

@@ -1,7 +1,7 @@
 [data-identifier="fluff-selector-dropdown"] {
   max-width: 100% !important;
 
-  .fk-d-tooltip__inner-content > div {
+  .fk-d-tooltip__inner-content .fluff-selector-keyboard-container {
     display: grid;
     grid-template-columns: repeat(var(--fluff-selector-columns, 3), 1fr);
 
@@ -11,6 +11,13 @@
       &:focus:focus-visible {
         background: transparent;
       }
+    }
+
+    .btn-fluff-container.keyboard-focused {
+      outline: 1px solid var(--tertiary);
+      border-radius: 3px;
+      z-index: 1;
+      position: relative;
     }
   }
 }

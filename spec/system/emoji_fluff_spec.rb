@@ -13,7 +13,13 @@ RSpec.describe "Emoji Fluff", system: true do
     )
   end
 
-  fab!(:user) { Fabricate(:admin) }
+  fab!(:user) do
+    Fabricate(
+      :user,
+      refresh_auto_groups: true,
+      composition_mode: UserOption.composition_mode_types[:markdown],
+    )
+  end
 
   let(:composer) { PageObjects::Components::Composer.new }
 
@@ -62,6 +68,10 @@ RSpec.describe "Emoji Fluff", system: true do
     expect(find(".d-editor .d-editor-input").value).to eq(":zzz:f-flip: ")
     expect(composer.preview).to have_css(".fluff.fluff--flip img.emoji")
     expect(page).to have_no_css("[data-identifier='fluff-selector-dropdown']")
+
+    composer.toggle_rich_editor
+
+    expect(composer).to have_css("span.fluff.fluff--flip img.emoji")
   end
 
   it "renders fluff selector in emoji picker and adds a decoration" do
@@ -79,5 +89,9 @@ RSpec.describe "Emoji Fluff", system: true do
 
     expect(find(".d-editor .d-editor-input").value).to eq(":rofl:f-flip:")
     expect(composer.preview).to have_css(".fluff.fluff--flip img.emoji")
+
+    composer.toggle_rich_editor
+
+    expect(composer).to have_css("span.fluff.fluff--flip img.emoji")
   end
 end

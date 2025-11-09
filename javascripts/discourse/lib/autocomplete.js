@@ -88,6 +88,11 @@ function overwriteChatEmojiAutocomplete(options) {
             });
         });
       }
+
+      this.fluffAutocompleteKeyboardNavigator.addListener();
+    },
+    onClose: () => {
+      this.fluffAutocompleteKeyboardNavigator.removeListener();
     },
     transformComplete: async (v) => {
       if (v.code) {
@@ -157,6 +162,12 @@ function overwriteEmojiAutocomplete() {
             });
         });
       }
+
+      this.fluffAutocompleteKeyboardNavigator.addListener();
+    },
+
+    onClose: () => {
+      this.fluffAutocompleteKeyboardNavigator.removeListener();
     },
 
     onKeyUp: (text, cp) => {
@@ -307,6 +318,7 @@ export function handleChatAutocomplete(Superclass) {
     @service tooltip;
     @service fluffEmojiAutocomplete;
     @service fluffPresence;
+    @service fluffAutocompleteKeyboardNavigator;
 
     applyAutocomplete(textarea, options) {
       if (!this.fluffPresence.isPresent) {
@@ -324,6 +336,7 @@ export function handleAutocomplete(Superclass) {
     @service tooltip;
     @service fluffEmojiAutocomplete;
     @service fluffPresence;
+    @service fluffAutocompleteKeyboardNavigator;
 
     _applyEmojiAutocomplete() {
       if (!this.siteSettings.enable_emoji || !this.fluffPresence.isPresent) {
