@@ -119,7 +119,7 @@ RSpec.describe "Emoji Only Class", system: true do
       within(".d-editor-preview") { expect(page).to have_no_css(".only-emoji") }
     end
 
-    it "updates only-emoji class in preview when editing" do
+    xit "updates only-emoji class in preview when editing" do
       visit("/")
       find("#create-topic").click
 

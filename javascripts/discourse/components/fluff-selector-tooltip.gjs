@@ -3,14 +3,15 @@ import { action } from "@ember/object";
 import { schedule } from "@ember/runloop";
 import { service } from "@ember/service";
 import { modifier } from "ember-modifier";
-import DTooltip from "discourse/components/d-tooltip";
 import dIcon from "discourse/helpers/d-icon";
 import { bind } from "discourse/lib/decorators";
+import DTooltip from "float-kit/components/d-tooltip";
 import { FLUFF_EMOJI_PICKER_ID } from "../lib/constants";
 import FluffSelector from "./fluff-selector";
 
 export default class FluffSelectorTooltip extends Component {
   @service fluffEmojiAutocomplete;
+  @service fluffAutocompleteKeyboardNavigator;
   @service site;
   @service tooltip;
 
@@ -35,14 +36,8 @@ export default class FluffSelectorTooltip extends Component {
     return FLUFF_EMOJI_PICKER_ID;
   }
 
-  get itemElement() {
-    return document.querySelector(
-      `.autocomplete.with-fluff [data-code="${this.option.code}"]`
-    );
-  }
-
   get triggers() {
-    return { mobile: ["click"], desktop: ["hover"] };
+    return { mobile: ["click"], desktop: ["click", "hover"] };
   }
 
   get untriggers() {
@@ -58,11 +53,15 @@ export default class FluffSelectorTooltip extends Component {
   @action
   onShow() {
     this.fluffEmojiAutocomplete.opened = true;
+    this.fluffAutocompleteKeyboardNavigator.setCloseCallback(() =>
+      this.tooltip.close(FLUFF_EMOJI_PICKER_ID)
+    );
   }
 
   @action
   onClose() {
     this.fluffEmojiAutocomplete.opened = false;
+    this.fluffAutocompleteKeyboardNavigator.setCloseCallback(null);
   }
 
   <template>
@@ -83,7 +82,12 @@ export default class FluffSelectorTooltip extends Component {
           {{dIcon "wand-magic-sparkles"}}
         </:trigger>
         <:content>
-          <FluffSelector @data={{@option}} />
+          <FluffSelector
+            @data={{@option}}
+            @selectedIndex={{@selectedIndex}}
+            @onSelect={{@onSelect}}
+            @onRender={{@onRender}}
+          />
         </:content>
       </DTooltip>
     {{/if}}
