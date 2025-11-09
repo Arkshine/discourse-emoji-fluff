@@ -96,7 +96,7 @@ class EmojiFluffInit {
       this.fluffPresence.setTo(
         settings.enabled &&
           transition.targetName &&
-          ["discovery.", "topic.", "userPrivateMessages.user."].some(
+          ["discovery.", "topic.", "chat.", "userPrivateMessages.user."].some(
             (partial) => transition.targetName.startsWith(partial)
           )
       );
