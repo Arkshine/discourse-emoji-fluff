@@ -321,7 +321,7 @@ export function handleChatAutocomplete(Superclass) {
     @service fluffAutocompleteKeyboardNavigator;
 
     applyAutocomplete(textarea, options) {
-      if (!this.fluffPresence.isPresent) {
+      if (!this.fluffPresence.isPresent || options.key !== ":") {
         return super.applyAutocomplete(textarea, options);
       }
 
