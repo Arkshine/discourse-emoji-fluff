@@ -2,8 +2,8 @@ import { schedule } from "@ember/runloop";
 import { service } from "@ember/service";
 import { emojiSearch, isSkinTonableEmoji } from "pretty-text/emoji";
 import { translations } from "pretty-text/emoji/data";
+import EmojiAutocompleteResults from "discourse/components/emoji-autocomplete-results";
 import EmojiPickerDetached from "discourse/components/emoji-picker/detached";
-import renderEmojiAutocomplete from "discourse/lib/autocomplete/emoji";
 import loadEmojiSearchAliases from "discourse/lib/load-emoji-search-aliases";
 import { emojiUrlFor } from "discourse/lib/text";
 import virtualElementFromTextRange from "discourse/lib/virtual-element-from-text-range";
@@ -133,9 +133,8 @@ function overwriteChatEmojiAutocomplete(options) {
 
 function overwriteEmojiAutocomplete() {
   const options = {
-    template: renderEmojiAutocomplete,
     component: FluffRenderEmojiAutocomplete, // Fluff component
-    key: ":",
+    key: EmojiAutocompleteResults.TRIGGER_KEY,
     afterComplete: () => {
       schedule(
         "afterRender",
